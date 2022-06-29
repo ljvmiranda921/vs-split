@@ -93,6 +93,10 @@ def wasserstein_spacy(
 
     RETURNS the training and test spaCy Docs
     """
+    if not isinstance(docs[0], Doc):
+        # Just check the first element
+        msg.fail("Not all elements in `docs` is of type spacy.tokens.Doc", exits=1)
+
     nn_tree = neighbors.NearestNeighbors(
         n_neighbors=int(test_size * len(docs)),
         algorithm="ball_tree",
