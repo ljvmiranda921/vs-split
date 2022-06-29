@@ -1,0 +1,3 @@
+numpy
+# For linguistic splits
+spacy>=3.3.0
