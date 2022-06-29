@@ -69,7 +69,7 @@ def wasserstein(
 
 
 @splitters.register("wasserstein-spacy.v1")
-def wasserstein(
+def wasserstein_spacy(
     docs: Iterable[Doc],
     test_size: float = 0.2,
     n_trials: int = 1,
