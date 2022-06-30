@@ -138,7 +138,7 @@ def doc_length(
     """
     Heuristic split based on document length
 
-    By default, it lokos for a sentence length threshold, and put all the long
+    By default, it looks for a sentence length threshold, and puts all the long
     sentences in the test split. The threshold is chosen so that approximately
     10% of the data ends up in the test set.
 
