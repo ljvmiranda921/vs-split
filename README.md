@@ -1,4 +1,4 @@
-# vs-split
+# vs-split (WIP)
 
 A Python library for creating adversarial splits.
 
