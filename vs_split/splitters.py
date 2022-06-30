@@ -1,4 +1,4 @@
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, Optional
 
 import catalogue
 import numpy as np
@@ -123,4 +123,55 @@ def wasserstein_spacy(
     docs_train = _get_elements_by_idx(docs, train_idxs)
     docs_test = _get_elements_by_idx(docs, test_idxs)
     msg.text(f"Sizes after split: train ({len(docs_train)}), test ({len(docs_test)})")
+    return docs_train, docs_test
+
+
+@splitters.register("doc-length.v1")
+def doc_length(
+    docs: Iterable[Doc],
+    test_size: Optional[float] = 0.1,
+    length_threshold: Optional[int] = None,
+):
+    """
+    Heuristic split based on document length
+
+    By default, it lokos for a sentence length threshold, and put all the long
+    sentences in the test split. The threshold is chosen so that approximately
+    10% of the data ends up in the test set.
+
+    You can also override the threshold by passing a value in the
+    `length_threshold` parameter.
+
+    docs (List[Doc]): list of spaCy Doc objects to split.
+    test_size (Optional[float]): the size of the test set for determining the split.
+    length_threshold (Optional[int]): arbitrary length to split the dataset against.
+
+    RETURNS the training and test spaCy Doc objects.
+    """
+    doc_lengths = [len(doc) for doc in docs]
+    if not length_threshold:
+        length_threshold = np.percentile(doc_lengths, 100 - (test_size * 100))
+        msg.text(f"Splitting the dataset at doc length {int(length_threshold)}")
+
+    all_idxs = set(range(len(docs)))
+    # fmt: off
+    test_idxs = [
+        idx 
+        for idx, length in enumerate(doc_lengths) 
+        if length >= int(length_threshold)
+    ]
+    # fmt: on
+    train_idxs = all_idxs - set(test_idxs)
+    docs_train = _get_elements_by_idx(docs, train_idxs)
+    docs_test = _get_elements_by_idx(docs, test_idxs)
+    msg.text(f"Sizes after split: train ({len(docs_train)}), test ({len(docs_test)})")
+
+    if len(docs_test) == 0:
+        msg.warn("Test set contains no elements!")
+    if len(docs_test) >= len(docs_train):
+        msg.warn(
+            "Test set has a larger size than the train set!"
+            f" {len(docs_test)} >= {len(docs_train)}"
+        )
+
     return docs_train, docs_test
