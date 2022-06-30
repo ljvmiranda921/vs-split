@@ -30,6 +30,8 @@ def wasserstein(
     search on a random centroid. Based on Søgaard, Ebert et al.'s work on
     'We Need to Talk About Random Splits' (EACL 2021).
 
+    X (Iterable): an array of features.
+    y (Iterable): an array of labels.
     test_size (float): the number of neighbors to query.
     n_trials (int): number of test sets requested.
     leaf_size (int): the leaf size parameter for nearest-neighbor search.
@@ -86,12 +88,13 @@ def wasserstein_spacy(
     This splitter takes in an iterable of spaCy Docs and outputs its training
     and test partitions.
 
+    docs (List[Doc]): list of spaCy Doc objects to split.
     test_size (float): the number of neighbors to query.
     n_trials (int): number of test sets requested.
     leaf_size (int): the leaf size parameter for nearest-neighbor search.
         High values are slower, but less memory-heavy computation.
 
-    RETURNS the training and test spaCy Docs
+    RETURNS the training and test spaCy Doc objects
     """
     if not isinstance(docs[0], Doc):
         # Just check the first element
