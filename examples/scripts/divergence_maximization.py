@@ -1,7 +1,7 @@
 """Demo for splitting by divergence maximization"""
 
-import random
 import itertools
+import random
 from pathlib import Path
 from typing import List
 
