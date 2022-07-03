@@ -78,6 +78,7 @@ def wasserstein_spacy(
     leaf_size: int = 3,
     use_counts: bool = False,
     min_df: Union[int, float] = 1,
+    n_jobs: Optional[int] = None,
 ) -> Tuple[Iterable[Doc], Iterable[Doc]]:
     """
     Perform adversarial splitting using a divergence maximization method
@@ -97,6 +98,7 @@ def wasserstein_spacy(
         High values are slower, but less memory-heavy computation.
     use_counts (bool): Use count vectors instead of spaCy docs.
     min_df (Union[int,float]): Remove terms that appear too infrequently given a threshold.
+    n_jobs (Optional[int]): Number of parallel jobs to run for neighbor search
 
     RETURNS the training and test spaCy Doc objects
     """
@@ -109,6 +111,7 @@ def wasserstein_spacy(
         algorithm="ball_tree",
         leaf_size=leaf_size,
         metric=stats.wasserstein_distance,
+        n_jobs=n_jobs,
     )
     word_vectors = np.asarray([doc.vector for doc in docs])
     if word_vectors.shape[1] == 0:
@@ -118,7 +121,9 @@ def wasserstein_spacy(
         )
     if word_vectors.shape[1] == 0 or use_counts:
         texts = [doc.text for doc in docs]
-        vectorizer = feature_extraction.text.CountVectorizer(dtype=np.int8)
+        vectorizer = feature_extraction.text.CountVectorizer(
+            dtype=np.int8, min_df=min_df
+        )
         text_counts = vectorizer.fit_transform(texts)
         word_vectors = text_counts.todense()
 

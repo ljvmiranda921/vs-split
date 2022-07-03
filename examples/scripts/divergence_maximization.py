@@ -37,7 +37,7 @@ def main(display_size: int = 5, splitters: List[str] = DEFAULT_SPLITS):
 
         dataset = _combine_docs(train, dev, test)
         traindev = _combine_docs(train, dev)
-        ntrain, ntest = spacy_train_test_split(dataset, split_id=split_id)
+        ntrain, ntest = spacy_train_test_split(dataset, split_id=split_id, n_jobs=-1)
         _display_train_test(traindev, test, ntrain, ntest, display_size)
 
 
