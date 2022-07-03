@@ -17,6 +17,8 @@ CORPUS_PATH = Path().parent / "corpus"
 
 
 def main(display_size: int = 5, splitters: List[str] = DEFAULT_SPLITS):
+    msg.info(f"Splitters: {','.join(splitters)}")
+
     msg.divider(text="Divergence maximization")
     msg.info(
         "This script runs a demo of the divergence maximization split. "
