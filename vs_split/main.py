@@ -1,9 +1,8 @@
 from typing import Iterable
 
 from spacy.tokens import Doc
-from wasabi import msg
-
 from vs_split.splitters import splitters as splitter_catalogue
+from wasabi import msg
 
 
 def train_test_split(X: Iterable, y: Iterable, split_id: str, **attrs):
