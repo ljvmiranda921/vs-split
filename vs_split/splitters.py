@@ -51,7 +51,7 @@ def wasserstein(
     for trial in range(n_trials):
         msg.text(f"Trial set: {trial}")
         sampled_point = np.random.randint(
-            np.array(X).max().max() + 1, size=(1, np.array(X).shape[1])
+            np.asarray(X).max().max() + 1, size=(1, np.asarray(X).shape[1])
         )
         nearest_neighbors = nn_tree.kneighbors(sampled_point, return_distance=False)
         nearest_neighbor = nearest_neighbors[0]  # query only a single point
@@ -128,8 +128,8 @@ def wasserstein_spacy(
     for trial in range(n_trials):
         msg.text(f"Trial set: {trial}")
         sampled_point = np.random.randint(
-            np.array(word_vectors).max().max() + 1,
-            size=(1, np.array(word_vectors).shape[1]),
+            np.asarray(word_vectors).max().max() + 1,
+            size=(1, np.asarray(word_vectors).shape[1]),
         )
         nearest_neighbors = nn_tree.kneighbors(sampled_point, return_distance=False)
         nearest_neighbor = nearest_neighbors[0]  # query only a single point
