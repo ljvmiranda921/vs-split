@@ -43,3 +43,12 @@ commands:
       - corpus/en-wikineural-train.spacy
       - corpus/en-wikineural-dev.spacy
       - corpus/en-wikineural-test.spacy
+
+  - name: "demo-divergence-maximization"
+    help: "Run the Divergence Maximization demo"
+    script:
+      - python3 -m scripts.divergence_maximization
+    deps:
+      - corpus/en-wikineural-train.spacy
+      - corpus/en-wikineural-dev.spacy
+      - corpus/en-wikineural-test.spacy
