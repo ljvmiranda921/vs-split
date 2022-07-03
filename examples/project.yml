@@ -24,13 +24,13 @@ commands:
     help: "Convert Wikineural dataset into spaCy Docs"
     script:
       - >-
-        python -m scripts.wikineural_remove_indices 
+        python -m scripts.preprocess_wikineural 
         assets/raw-en-wikineural-train.iob assets/en-wikineural-train.iob
       - >-
-        python -m scripts.wikineural_remove_indices 
+        python -m scripts.preprocess_wikineural 
         assets/raw-en-wikineural-dev.iob assets/en-wikineural-dev.iob
       - >-
-        python -m scripts.wikineural_remove_indices 
+        python -m scripts.preprocess_wikineural 
         assets/raw-en-wikineural-test.iob assets/en-wikineural-test.iob
       - python -m spacy convert assets/en-wikineural-train.iob corpus/
       - python -m spacy convert assets/en-wikineural-dev.iob corpus/
