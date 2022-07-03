@@ -19,7 +19,6 @@ def wasserstein(
     X: Iterable,
     y: Iterable,
     test_size: float = 0.2,
-    n_trials: int = 1,
     leaf_size: int = 3,
 ):
     """
@@ -33,7 +32,6 @@ def wasserstein(
     X (Iterable): an array of features.
     y (Iterable): an array of labels.
     test_size (float): the number of neighbors to query.
-    n_trials (int): number of test sets requested.
     leaf_size (int): the leaf size parameter for nearest-neighbor search.
         High values are slower, but less memory-heavy computation.
 
@@ -47,15 +45,11 @@ def wasserstein(
     )
     nn_tree.fit(X)
 
-    test_idxs = []
-    for trial in range(n_trials):
-        msg.text(f"Trial set: {trial}")
-        sampled_point = np.random.randint(
-            np.asarray(X).max().max() + 1, size=(1, np.asarray(X).shape[1])
-        )
-        nearest_neighbors = nn_tree.kneighbors(sampled_point, return_distance=False)
-        nearest_neighbor = nearest_neighbors[0]  # query only a single point
-        test_idxs.append(nearest_neighbor)
+    sampled_point = np.random.randint(
+        np.asarray(X).max().max() + 1, size=(1, np.asarray(X).shape[1])
+    )
+    nearest_neighbors = nn_tree.kneighbors(sampled_point, return_distance=False)
+    test_idxs = nearest_neighbors[0]  # query only a single point
 
     all_idxs = set(range(len(X)))
     train_idxs = all_idxs - set(test_idxs)
@@ -74,7 +68,6 @@ def wasserstein(
 def wasserstein_spacy(
     docs: Iterable[Doc],
     test_size: float = 0.2,
-    n_trials: int = 1,
     leaf_size: int = 3,
     use_counts: bool = False,
     min_df: Union[int, float] = 1,
@@ -93,7 +86,6 @@ def wasserstein_spacy(
 
     docs (List[Doc]): list of spaCy Doc objects to split.
     test_size (float): the number of neighbors to query.
-    n_trials (int): number of test sets requested.
     leaf_size (int): the leaf size parameter for nearest-neighbor search.
         High values are slower, but less memory-heavy computation.
     use_counts (bool): Use count vectors instead of spaCy docs.
@@ -130,16 +122,12 @@ def wasserstein_spacy(
     msg.text(f"Performing nearest neighbor search (shape={word_vectors.shape})")
     nn_tree.fit(word_vectors)
 
-    test_idxs = []
-    for trial in range(n_trials):
-        msg.text(f"Trial set: {trial}")
-        sampled_point = np.random.randint(
-            np.asarray(word_vectors).max().max() + 1,
-            size=(1, np.asarray(word_vectors).shape[1]),
-        )
-        nearest_neighbors = nn_tree.kneighbors(sampled_point, return_distance=False)
-        nearest_neighbor = nearest_neighbors[0]  # query only a single point
-        test_idxs.append(nearest_neighbor)
+    sampled_point = np.random.randint(
+        np.asarray(word_vectors).max().max() + 1,
+        size=(1, np.asarray(word_vectors).shape[1]),
+    )
+    nearest_neighbors = nn_tree.kneighbors(sampled_point, return_distance=False)
+    test_idxs = nearest_neighbors[0]  # query only a single point
 
     all_idxs = set(range(len(docs)))
     train_idxs = all_idxs - set(test_idxs)
