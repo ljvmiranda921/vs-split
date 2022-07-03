@@ -1,9 +1,9 @@
-from typing import Iterable, Tuple, Optional
+from typing import Iterable, Optional, Tuple, Union
 
 import catalogue
 import numpy as np
 from scipy import stats
-from sklearn import neighbors
+from sklearn import feature_extraction, neighbors
 from spacy.tokens import Doc
 from wasabi import msg
 
@@ -76,6 +76,8 @@ def wasserstein_spacy(
     test_size: float = 0.2,
     n_trials: int = 1,
     leaf_size: int = 3,
+    use_counts: bool = False,
+    min_df: Union[int, float] = 1,
 ) -> Tuple[Iterable[Doc], Iterable[Doc]]:
     """
     Perform adversarial splitting using a divergence maximization method
@@ -93,6 +95,8 @@ def wasserstein_spacy(
     n_trials (int): number of test sets requested.
     leaf_size (int): the leaf size parameter for nearest-neighbor search.
         High values are slower, but less memory-heavy computation.
+    use_counts (bool): Use count vectors instead of spaCy docs.
+    min_df (Union[int,float]): Remove terms that appear too infrequently given a threshold.
 
     RETURNS the training and test spaCy Doc objects
     """
@@ -106,7 +110,18 @@ def wasserstein_spacy(
         leaf_size=leaf_size,
         metric=stats.wasserstein_distance,
     )
-    word_vectors = [doc.vector for doc in docs]
+    word_vectors = np.asarray([doc.vector for doc in docs])
+    if word_vectors.shape[1] == 0:
+        msg.warn(
+            f"The Doc objects don't contain any vectors (shape: {word_vectors.shape}) "
+            "We will use TF-IDF instead."
+        )
+    if word_vectors.shape[1] == 0 or use_counts:
+        texts = [doc.text for doc in docs]
+        vectorizer = feature_extraction.text.CountVectorizer(dtype=np.int8)
+        text_counts = vectorizer.fit_transform(texts)
+        word_vectors = text_counts.todense()
+
     nn_tree.fit(word_vectors)
 
     test_idxs = []
