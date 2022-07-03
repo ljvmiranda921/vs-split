@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import List
 
 import spacy
-import typer
+import numpy as np
 from spacy.tokens import Doc, DocBin
 from wasabi import msg
 
@@ -66,17 +66,18 @@ def _display_train_test(
     new_test: List[Doc],
     display_size: int,
 ):
-    def _show(docs: List[Doc]):
-        for doc in random.shuffle(docs)[:display_size]:
-            msg.text(doc.text)
+    def _format_docs(docs: List[Doc]) -> str:
+        random.shuffle(docs)
+        texts = [doc.text for doc in docs[:display_size]]
+        return ", ".join(texts)
 
     msg.info("Sample texts from the previous split")
-    _show(old_train)
-    _show(old_test)
+    msg.text(f"Old training set: {_format_docs(old_train)}")
+    msg.text(f"Old test set: {_format_docs(old_test)}")
 
     msg.info("Sample texts from the new split")
-    _show(new_train)
-    _show(new_test)
+    msg.text(f"New training set: {_format_docs(new_train)}")
+    msg.text(f"New test set: {_format_docs(new_test)}")
 
 
 if __name__ == "__main__":
