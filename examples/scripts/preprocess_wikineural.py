@@ -12,6 +12,8 @@ def remove_indices(input_path: Path, output_path: Path):
     with output_path.open("w") as f:
         for line in lines:
             new_line = line if line == "\n" else line.lstrip(digits)[1:]
+            if new_line == "-DOCSTART-\tO\n":
+                new_line = "-DOCSTART- -X- O O\n"
             f.write(new_line)
 
 
