@@ -1,7 +1,5 @@
 numpy
 scikit-learn
-# For linguistic splits
 spacy>=3.3.0
-# Library
 catalogue
 wasabi
