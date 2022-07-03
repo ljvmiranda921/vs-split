@@ -122,6 +122,7 @@ def wasserstein_spacy(
         text_counts = vectorizer.fit_transform(texts)
         word_vectors = text_counts.todense()
 
+    msg.text(f"Performing nearest neighbor search (shape={word_vectors.shape})")
     nn_tree.fit(word_vectors)
 
     test_idxs = []
