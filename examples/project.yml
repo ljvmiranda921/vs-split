@@ -1,0 +1,45 @@
+title: "Adversarial Splitting Examples"
+description: |
+  This project shows different adversarial splitting examples
+  in some machine learning datasets (most are NLP).
+
+directories:
+  - "assets"
+  - "corpus"
+  - "scripts"
+
+assets:
+  - dest: "assets/raw-en-wikineural-train.iob"
+    description: "WikiNeural (en) training dataset from Tedeschi et al. (EMNLP 2021)"
+    url: https://github.com/Babelscape/wikineural/blob/master/data/conll/en/train.conllu
+  - dest: "assets/raw-en-wikineural-dev.iob"
+    description: "WikiNeural (en) dev dataset from Tedeschi et al. (EMNLP 2021)"
+    url: https://github.com/Babelscape/wikineural/blob/master/data/conll/en/val.conllu
+  - dest: "assets/raw-en-wikineural-test.iob"
+    description: "WikiNeural (en) test dataset from Tedeschi et al. (EMNLP 2021)"
+    url: https://github.com/Babelscape/wikineural/blob/master/data/conll/en/test.conllu
+
+commands:
+  - name: "convert-wikineural"
+    help: "Convert Wikineural dataset into spaCy Docs"
+    script:
+      - >-
+        python -m scripts.wikineural_remove_indices 
+        assets/raw-en-wikineural-train.iob assets/en-wikineural-train.iob
+      - >-
+        python -m scripts.wikineural_remove_indices 
+        assets/raw-en-wikineural-dev.iob assets/en-wikineural-dev.iob
+      - >-
+        python -m scripts.wikineural_remove_indices 
+        assets/raw-en-wikineural-test.iob assets/en-wikineural-test.iob
+      - python -m spacy convert assets/en-wikineural-train.iob corpus/
+      - python -m spacy convert assets/en-wikineural-dev.iob corpus/
+      - python -m spacy convert assets/en-wikineural-test.iob corpus/
+    deps:
+      - assets/raw-en-wikineural-train.iob
+      - assets/raw-en-wikineural-dev.iob
+      - assets/raw-en-wikineural-test.iob
+    outputs:
+      - corpus/en-wikineural-train.spacy
+      - corpus/en-wikineural-dev.spacy
+      - corpus/en-wikineural-test.spacy
