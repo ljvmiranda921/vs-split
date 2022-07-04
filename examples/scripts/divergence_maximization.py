@@ -1,13 +1,17 @@
 """Demo for splitting by divergence maximization"""
 
 import itertools
+import json
 import random
+import tempfile
 from pathlib import Path
-from typing import List
+from typing import Dict, List, Tuple, Union
 
 import spacy
-from spacy.tokens import Doc, DocBin
+from spacy.cli._util import parse_config_overrides
+from spacy.cli.evaluate import evaluate as spacy_evaluate
 from spacy.cli.train import train as spacy_train
+from spacy.tokens import Doc, DocBin
 from wasabi import msg
 
 from vs_split import spacy_train_test_split
@@ -35,7 +39,6 @@ def main(
 
         # Wikineural dataset (english)
         msg.divider(text="Dataset: en-wikineural", char="-")
-        # TODO: specify paths
         train = _get_docs(CORPUS_PATH / "en-wikineural-train.spacy")
         dev = _get_docs(CORPUS_PATH / "en-wikineural-dev.spacy")
         test = _get_docs(CORPUS_PATH / "en-wikineural-test.spacy")
@@ -48,8 +51,68 @@ def main(
         _display_train_test(traindev, test, ntrain, ntest, display_size)
 
         if fit_model:
-            # TODO
-            spacy_train(config_path=config_path, output_path=output_path, overrides={})
+            adv_scores = _fit_and_evaluate_model(ntrain, ntest, config_path)
+            std_scores = _fit_and_evaluate_model(traindev, test, config_path)
+
+
+def _fit_and_evaluate_model(
+    train: List[Doc], test: List[Doc], config_path: Path, use_gpu: int = 0
+) -> Dict:
+    """Fit a NER model and evaluate it
+
+    Instead of working with the registered architectures, I decided to just mimic
+    what happens in spaCy CLI while in a temporary directory.
+    """
+
+    def _split_train_dev(
+        traindev: List[Doc], split_size: float = 0.8
+    ) -> Tuple[List[Doc], List[Doc]]:
+        train_size = int(len(traindev) * split_size)
+        return traindev[:train_size], traindev[train_size:]
+
+    def _save_docs_to_tmp(
+        train: List[Doc], dev: List[Doc], test: List[Doc], output_path: Path
+    ) -> List[str]:
+        datasets = {
+            "train.spacy": train,
+            "dev.spacy": dev,
+            "test.spacy": test,
+        }
+        for name, docs in datasets.items():
+            doc_bin = DocBin(docs=docs)
+            doc_bin.to_disk(output_path / name)
+        return list(datasets.keys())
+
+    ntrain, ndev = _split_train_dev(train)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        msg.text(f"Performing training and evaluation in {tmp_dir}...")
+        # Setup the dataset
+        tmp_dir_path = Path(tmp_dir)
+        tmp_filepaths = _save_docs_to_tmp(ntrain, ndev, test, tmp_dir_path)
+        train_fp, dev_fp, test_fp = tmp_filepaths
+        model_path = tmp_dir_path / "output"
+        # Train model
+        msg.text(f"Training model (will be saved at {str(model_path)}")
+        spacy_train(
+            config_path=config_path,
+            output_path=model_path,
+            overrides={"paths.train": train_fp, "paths.dev": dev_fp},
+            use_gpu=use_gpu,
+        )
+        # Evaluate model
+        msg.text(f"Evaluating model (will be saved at {str(metrics_path)}")
+        metrics_path = tmp_dir_path / "metrics.json"
+        spacy_evaluate(
+            model=model_path / "model-best",
+            data_path=test_fp,
+            output=metrics_path,
+            use_gpu=use_gpu,
+        )
+
+        with open(metrics_path) as f:
+            scores = json.load(f)
+
+    return scores
 
 
 def _get_docs(docbin_path: Path) -> List[Doc]:
