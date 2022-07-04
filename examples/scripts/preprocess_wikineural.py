@@ -4,7 +4,7 @@ from string import digits
 import typer
 
 
-def remove_indices(input_path: Path, output_path: Path):
+def preprocess_wikineural(input_path: Path, output_path: Path):
     """Helper function to remove the indices for the WikiNeural dataset"""
     with input_path.open() as f:
         lines = f.readlines()
@@ -18,4 +18,4 @@ def remove_indices(input_path: Path, output_path: Path):
 
 
 if __name__ == "__main__":
-    typer.run(remove_indices)
+    typer.run(preprocess_wikineural)
