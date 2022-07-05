@@ -69,6 +69,7 @@ def main(
                 use_gpu=use_gpu,
                 max_steps=max_steps,
             )
+            print(_format_table(adv_scores, std_scores, split_id))
 
 
 def _fit_and_evaluate_model(
@@ -135,6 +136,19 @@ def _fit_and_evaluate_model(
         )
 
     return scores
+
+
+def _format_table(
+    adv_scores: Dict[str, Any], std_scores: Dict[str, Any], split_id: str
+) -> str:
+    header = ["Split", "ENTS_P", "ENTS_R", "ENTS_F"]
+    adv = [adv_scores["ents_p"], adv_scores["ents_r"], adv_scores["ents_f"]]
+    adv = [round(s, 2) for s in adv]
+    std = [std_scores["ents_p"], std_scores["ents_r"], std_scores["ents_f"]]
+    std = [round(s, 2) for s in std]
+    data = [[split_id] + adv, ["Standard"] + std]
+    table = msg.table(data, header=header, divider=True)
+    return table
 
 
 def _get_docs(docbin_path: Path) -> List[Doc]:
