@@ -17,11 +17,18 @@ from wasabi import msg
 
 DEFAULT_SPLITS = ["wasserstein-spacy.v1"]
 CORPUS_PATH = Path().parent / "corpus"
+METRICS = ["ents_p", "ents_r", "ents_f"]
+
+DEFAULT_TRAIN = CORPUS_PATH / "en-wikineural-train.spacy"
+DEFAULT_DEV = CORPUS_PATH / "en-wikineural-dev.spacy"
+DEFAULT_TEST = CORPUS_PATH / "en-wikineural-test.spacy"
 
 
 def main(
     config_path: Path,
-    display_size: int = 3,
+    train_dataset: Path = DEFAULT_TRAIN,
+    dev_dataset: Path = DEFAULT_DEV,
+    test_dataset: Path = DEFAULT_TEST,
     splitters: List[str] = DEFAULT_SPLITS,
     fit_model: bool = True,
     vectors: str = "en_core_web_lg",
@@ -29,28 +36,31 @@ def main(
     max_steps: int = 20000,
 ):
     msg.info(f"Splitters: {','.join(splitters)}")
+    train = _get_docs(train_dataset)
+    dev = _get_docs(dev_dataset)
+    test = _get_docs(test_dataset)
+    rows = []  # keep track of the scores for reporting
 
-    msg.divider(text="Divergence maximization")
-    msg.info(
-        "This script runs a demo of the divergence maximization split. "
-        "On NLP datasets such as Wikineural (en) and ConLL2003. You can configure "
-        "the splits to use by setting the --splitters parameter."
-    )
+    traindev = _combine_docs(train, dev)
+    if fit_model:
+        msg.info("Getting baseline performance for standard split")
+        std_scores = _fit_and_evaluate_model(
+            traindev,
+            test,
+            config_path,
+            vectors=vectors,
+            use_gpu=use_gpu,
+            max_steps=max_steps,
+        )
+        rows.append(["standard"] + [std_scores[metric] for metric in METRICS])
 
     for split_id in splitters:
 
-        # Wikineural dataset (english)
-        msg.divider(text="Dataset: en-wikineural", char="-")
-        train = _get_docs(CORPUS_PATH / "en-wikineural-train.spacy")
-        dev = _get_docs(CORPUS_PATH / "en-wikineural-dev.spacy")
-        test = _get_docs(CORPUS_PATH / "en-wikineural-test.spacy")
-
+        msg.divider(text=split_id)
         dataset = _combine_docs(train, dev, test)
-        traindev = _combine_docs(train, dev)
         ntrain, ntest = spacy_train_test_split(
             dataset, split_id=split_id, n_jobs=-1, min_df=0.10
         )
-        _display_train_test(traindev, test, ntrain, ntest, display_size)
 
         if fit_model:
             adv_scores = _fit_and_evaluate_model(
@@ -61,15 +71,12 @@ def main(
                 use_gpu=use_gpu,
                 max_steps=max_steps,
             )
-            std_scores = _fit_and_evaluate_model(
-                traindev,
-                test,
-                config_path,
-                vectors=vectors,
-                use_gpu=use_gpu,
-                max_steps=max_steps,
-            )
-            print(_format_table(adv_scores, std_scores, split_id))
+            rows.append([split_id] + [adv_scores[metric] for metric in METRICS])
+
+    # Report scores
+    if rows:
+        header = ["Split", "ENTS_P", "ENTS_R", "ENTS_F"]
+        msg.table(rows, header=header, divider=True)
 
 
 def _fit_and_evaluate_model(
@@ -128,7 +135,6 @@ def _fit_and_evaluate_model(
         train_fp, dev_fp, test_fp = tmp_filepaths
         model_path = tmp_dir_path / "output"
         # Train model
-        msg.text(f"Training model (will be saved at {str(model_path)})")
         spacy_train(
             config_path=config_path,
             output_path=model_path,
@@ -150,20 +156,6 @@ def _fit_and_evaluate_model(
     return scores
 
 
-def _format_table(
-    adv_scores: Dict[str, Any], std_scores: Dict[str, Any], split_id: str
-) -> str:
-    """Format the scores in a table for reporting"""
-    header = ["Split", "ENTS_P", "ENTS_R", "ENTS_F"]
-    adv = [adv_scores["ents_p"], adv_scores["ents_r"], adv_scores["ents_f"]]
-    adv = [round(s, 2) for s in adv]
-    std = [std_scores["ents_p"], std_scores["ents_r"], std_scores["ents_f"]]
-    std = [round(s, 2) for s in std]
-    data = [[split_id] + adv, ["Standard"] + std]
-    table = msg.table(data, header=header, divider=True)
-    return table
-
-
 def _get_docs(docbin_path: Path) -> List[Doc]:
     """Read Doc objects given a Docbin path"""
     docbin = DocBin().from_disk(docbin_path)
@@ -179,31 +171,6 @@ def _combine_docs(*args: List[Doc]) -> List[Doc]:
     before adversarial splitting.
     """
     return list(itertools.chain.from_iterable(args))
-
-
-def _display_train_test(
-    old_train: List[Doc],
-    old_test: List[Doc],
-    new_train: List[Doc],
-    new_test: List[Doc],
-    display_size: int,
-):
-    """Report the split train test partitions"""
-
-    def _format_docs(docs: List[Doc], title: str):
-        random.shuffle(docs)
-        texts = [doc.text for doc in docs[:display_size]]
-        for idx, text in enumerate(texts):
-            msg.divider(f"{title} ({idx})", char=".")
-            msg.text(f"{text}\n")
-
-    msg.info("Sample texts from the previous split")
-    _format_docs(old_train, "Old train example")
-    _format_docs(old_test, "Old test example")
-
-    msg.info("Sample texts from the new split")
-    _format_docs(new_train, "New train example")
-    _format_docs(new_test, "New test example")
 
 
 if __name__ == "__main__":
