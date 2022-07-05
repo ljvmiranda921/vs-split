@@ -10,6 +10,9 @@ directories:
   - "scripts"
 
 vars:
+  train_dataset: corpus/en-wikineural-train.spacy
+  dev_dataset: corpus/en-wikineural-dev.spacy
+  test_dataset: corpus/en-wikineural-test.spacy
   config: configs/ner.cfg
   vectors: en_core_web_lg
   gpu_id: 0
@@ -51,11 +54,14 @@ commands:
       - corpus/en-wikineural-dev.spacy
       - corpus/en-wikineural-test.spacy
 
-  - name: "demo-divergence-maximization"
+  - name: "demo"
     help: "Run the Divergence Maximization demo"
     script:
       - >-
-        python3 -m scripts.divergence_maximization ${vars.config} 
+        python3 -m scripts.run_demo ${vars.config} 
+        --train-dataset ${vars.train_dataset}
+        --dev-dataset ${vars.dev_dataset}
+        --test-dataset ${vars.test_dataset}
         --vectors ${vars.vectors} 
         --use-gpu ${vars.gpu_id}
         --max-steps ${vars.max_steps}
