@@ -1,11 +1,10 @@
 """Demo for splitting by divergence maximization"""
 
 import itertools
-import json
 import random
 import tempfile
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple
 
 import spacy
 import typer
@@ -26,6 +25,8 @@ def main(
     splitters: List[str] = DEFAULT_SPLITS,
     fit_model: bool = True,
     vectors: str = "en_core_web_lg",
+    use_gpu: int = 0,
+    max_steps: int = 20000,
 ):
     msg.info(f"Splitters: {','.join(splitters)}")
 
@@ -52,8 +53,22 @@ def main(
         _display_train_test(traindev, test, ntrain, ntest, display_size)
 
         if fit_model:
-            adv_scores = _fit_and_evaluate_model(ntrain, ntest, config_path)
-            std_scores = _fit_and_evaluate_model(traindev, test, config_path)
+            adv_scores = _fit_and_evaluate_model(
+                ntrain,
+                ntest,
+                config_path,
+                vectors=vectors,
+                use_gpu=use_gpu,
+                max_steps=max_steps,
+            )
+            std_scores = _fit_and_evaluate_model(
+                traindev,
+                test,
+                config_path,
+                vectors=vectors,
+                use_gpu=use_gpu,
+                max_steps=max_steps,
+            )
 
 
 def _fit_and_evaluate_model(
@@ -62,7 +77,8 @@ def _fit_and_evaluate_model(
     config_path: Path,
     use_gpu: int = 0,
     vectors: str = "en_core_web_lg",
-) -> Dict:
+    max_steps: int = 20000,
+) -> Dict[str, Any]:
     """Fit a NER model and evaluate it
 
     Instead of working with the registered architectures, I decided to just mimic
@@ -107,21 +123,16 @@ def _fit_and_evaluate_model(
                 "paths.train": str(train_fp),
                 "paths.dev": str(dev_fp),
                 "paths.vectors": vectors,
+                "training.max_steps": max_steps,
             },
             use_gpu=use_gpu,
         )
         # Evaluate model
-        msg.text(f"Evaluating model (will be saved at {str(metrics_path)})")
-        metrics_path = tmp_dir_path / "metrics.json"
-        spacy_evaluate(
+        scores = spacy_evaluate(
             model=model_path / "model-best",
             data_path=test_fp,
-            output=metrics_path,
             use_gpu=use_gpu,
         )
-
-        with open(metrics_path) as f:
-            scores = json.load(f)
 
     return scores
 
