@@ -76,6 +76,7 @@ def main(
     # Report scores
     if rows:
         header = ["Split", "ENTS_P", "ENTS_R", "ENTS_F"]
+        rows = _round_up_scores(rows)
         msg.table(rows, header=header, divider=True)
 
 
@@ -154,6 +155,17 @@ def _fit_and_evaluate_model(
         )
 
     return scores
+
+
+def _round_up_scores(rows: List[List[Any]], ndigits: int = 2) -> List[List[Any]]:
+    """Reduce scores into 2-decimal numbers for readability"""
+    new_table = []
+    for row in rows:
+        new_row = []
+        for el in row:
+            new_row.append(round(el, ndigits) if isinstance(el, float) else el)
+        new_table.append(new_row)
+    return new_table
 
 
 def _get_docs(docbin_path: Path) -> List[Doc]:
