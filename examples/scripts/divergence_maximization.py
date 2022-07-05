@@ -71,17 +71,19 @@ def _fit_and_evaluate_model(
         return traindev[:train_size], traindev[train_size:]
 
     def _save_docs_to_tmp(
-        train: List[Doc], dev: List[Doc], test: List[Doc], output_path: Path
+        train: List[Doc], dev: List[Doc], test: List[Doc], output_dir: Path
     ) -> List[str]:
         datasets = {
             "train.spacy": train,
             "dev.spacy": dev,
             "test.spacy": test,
         }
-        for name, docs in datasets.items():
+        for filename, docs in datasets.items():
             doc_bin = DocBin(docs=docs)
-            doc_bin.to_disk(output_path / name)
-        return list(datasets.keys())
+            doc_bin.to_disk(output_dir / filename)
+
+        filepaths = [output_dir / filename for filename in datasets.keys()]
+        return filepaths
 
     ntrain, ndev = _split_train_dev(train)
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -92,15 +94,15 @@ def _fit_and_evaluate_model(
         train_fp, dev_fp, test_fp = tmp_filepaths
         model_path = tmp_dir_path / "output"
         # Train model
-        msg.text(f"Training model (will be saved at {str(model_path)}")
+        msg.text(f"Training model (will be saved at {str(model_path)})")
         spacy_train(
             config_path=config_path,
             output_path=model_path,
-            overrides={"paths.train": train_fp, "paths.dev": dev_fp},
+            overrides={"paths.train": str(train_fp), "paths.dev": str(dev_fp)},
             use_gpu=use_gpu,
         )
         # Evaluate model
-        msg.text(f"Evaluating model (will be saved at {str(metrics_path)}")
+        msg.text(f"Evaluating model (will be saved at {str(metrics_path)})")
         metrics_path = tmp_dir_path / "metrics.json"
         spacy_evaluate(
             model=model_path / "model-best",
