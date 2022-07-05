@@ -5,8 +5,12 @@ description: |
 
 directories:
   - "assets"
+  - "configs"
   - "corpus"
   - "scripts"
+
+vars:
+  config: configs/ner.cfg
 
 assets:
   - dest: "assets/raw-en-wikineural-train.iob"
@@ -47,7 +51,7 @@ commands:
   - name: "demo-divergence-maximization"
     help: "Run the Divergence Maximization demo"
     script:
-      - python3 -m scripts.divergence_maximization
+      - python3 -m scripts.divergence_maximization ${vars.config}
     deps:
       - corpus/en-wikineural-train.spacy
       - corpus/en-wikineural-dev.spacy
