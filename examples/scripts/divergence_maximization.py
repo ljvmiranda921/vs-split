@@ -8,13 +8,13 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 import spacy
+import typer
 from spacy.cli._util import parse_config_overrides
 from spacy.cli.evaluate import evaluate as spacy_evaluate
 from spacy.cli.train import train as spacy_train
 from spacy.tokens import Doc, DocBin
-from wasabi import msg
-
 from vs_split import spacy_train_test_split
+from wasabi import msg
 
 DEFAULT_SPLITS = ["wasserstein-spacy.v1"]
 CORPUS_PATH = Path().parent / "corpus"
@@ -158,4 +158,4 @@ def _display_train_test(
 
 
 if __name__ == "__main__":
-    main()
+    typer.run(main)
