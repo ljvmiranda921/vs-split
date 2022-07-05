@@ -25,6 +25,7 @@ def main(
     display_size: int = 3,
     splitters: List[str] = DEFAULT_SPLITS,
     fit_model: bool = True,
+    vectors: str = "en_core_web_lg",
 ):
     msg.info(f"Splitters: {','.join(splitters)}")
 
@@ -56,7 +57,11 @@ def main(
 
 
 def _fit_and_evaluate_model(
-    train: List[Doc], test: List[Doc], config_path: Path, use_gpu: int = 0
+    train: List[Doc],
+    test: List[Doc],
+    config_path: Path,
+    use_gpu: int = 0,
+    vectors: str = "en_core_web_lg",
 ) -> Dict:
     """Fit a NER model and evaluate it
 
@@ -98,7 +103,11 @@ def _fit_and_evaluate_model(
         spacy_train(
             config_path=config_path,
             output_path=model_path,
-            overrides={"paths.train": str(train_fp), "paths.dev": str(dev_fp)},
+            overrides={
+                "paths.train": str(train_fp),
+                "paths.dev": str(dev_fp),
+                "paths.vectors": vectors,
+            },
             use_gpu=use_gpu,
         )
         # Evaluate model
