@@ -70,8 +70,8 @@ def wasserstein_spacy(
     test_size: float = 0.2,
     leaf_size: int = 3,
     use_counts: bool = False,
-    min_df: Union[int, float] = 1,
-    n_jobs: Optional[int] = None,
+    min_df: Union[int, float] = 0.10,
+    n_jobs: Optional[int] = -1,
 ) -> Tuple[Iterable[Doc], Iterable[Doc]]:
     """
     Perform adversarial splitting using a divergence maximization method

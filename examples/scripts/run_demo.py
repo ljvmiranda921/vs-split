@@ -15,7 +15,7 @@ from spacy.tokens import Doc, DocBin
 from vs_split import spacy_train_test_split
 from wasabi import msg
 
-DEFAULT_SPLITS = ["wasserstein-spacy.v1"]
+DEFAULT_SPLITS = ["wasserstein-spacy.v1", "doc-length.v1"]
 CORPUS_PATH = Path().parent / "corpus"
 METRICS = ["ents_p", "ents_r", "ents_f"]
 
@@ -58,9 +58,7 @@ def main(
 
         msg.divider(text=split_id)
         dataset = _combine_docs(train, dev, test)
-        ntrain, ntest = spacy_train_test_split(
-            dataset, split_id=split_id, n_jobs=-1, min_df=0.10
-        )
+        ntrain, ntest = spacy_train_test_split(dataset, split_id=split_id)
 
         if fit_model:
             adv_scores = _fit_and_evaluate_model(
