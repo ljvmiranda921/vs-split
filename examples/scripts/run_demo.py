@@ -76,8 +76,9 @@ def main(
     # Report scores
     if rows:
         header = ["Split", "ENTS_P", "ENTS_R", "ENTS_F"]
+        aligns = ("l", "r", "r")
         rows = _round_up_scores(rows)
-        msg.table(rows, header=header, divider=True)
+        msg.table(rows, header=header, aligns=aligns, divider=True)
 
 
 def _fit_and_evaluate_model(
