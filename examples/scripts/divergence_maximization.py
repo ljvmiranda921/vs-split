@@ -82,19 +82,31 @@ def _fit_and_evaluate_model(
 ) -> Dict[str, Any]:
     """Fit a NER model and evaluate it
 
-    Instead of working with the registered architectures, I decided to just mimic
-    what happens in spaCy CLI while in a temporary directory.
+    Instead of working with the registered architectures, I decided to just
+    mimic what happens in spaCy CLI while in a temporary directory. I also
+    exposed a few parameters that I find important for quick-testing
+
+    train (List[Doc]): the spaCy Doc objects that will be used for training.
+    test (List[Doc]): the spaCy Doc objects that will be used for testing.
+    config_path (Path): path to the training configuration file.
+    use_gpu (int): GPU ID for training. Use -1 for CPU.
+    vectors (str): Name of base model to initialize the training with.
+    max_steps (int): Maximum number of steps for training.
+
+    RETURNS (Dict[str, Any]) a dictionary of scores
     """
 
     def _split_train_dev(
         traindev: List[Doc], split_size: float = 0.8
     ) -> Tuple[List[Doc], List[Doc]]:
+        """Split the training set into train and dev"""
         train_size = int(len(traindev) * split_size)
         return traindev[:train_size], traindev[train_size:]
 
     def _save_docs_to_tmp(
         train: List[Doc], dev: List[Doc], test: List[Doc], output_dir: Path
     ) -> List[str]:
+        """Save Doc objects as a .spacy file in an output directory"""
         datasets = {
             "train.spacy": train,
             "dev.spacy": dev,
@@ -141,6 +153,7 @@ def _fit_and_evaluate_model(
 def _format_table(
     adv_scores: Dict[str, Any], std_scores: Dict[str, Any], split_id: str
 ) -> str:
+    """Format the scores in a table for reporting"""
     header = ["Split", "ENTS_P", "ENTS_R", "ENTS_F"]
     adv = [adv_scores["ents_p"], adv_scores["ents_r"], adv_scores["ents_f"]]
     adv = [round(s, 2) for s in adv]
