@@ -53,11 +53,12 @@ commands:
 
   - name: "demo-divergence-maximization"
     help: "Run the Divergence Maximization demo"
-    script: >-
-      python3 -m scripts.divergence_maximization ${vars.config} 
-      --vectors ${vars.vectors} 
-      --use-gpu ${vars.gpu_id}
-      --max-steps ${vars.max_steps}
+    script:
+      - >-
+        python3 -m scripts.divergence_maximization ${vars.config} 
+        --vectors ${vars.vectors} 
+        --use-gpu ${vars.gpu_id}
+        --max-steps ${vars.max_steps}
     deps:
       - corpus/en-wikineural-train.spacy
       - corpus/en-wikineural-dev.spacy
