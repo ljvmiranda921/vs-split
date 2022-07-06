@@ -1,10 +1,9 @@
 """Demo for splitting by divergence maximization"""
 
 import itertools
-import random
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional
 
 import spacy
 import typer
@@ -25,21 +24,32 @@ DEFAULT_TEST = CORPUS_PATH / "en-wikineural-test.spacy"
 
 
 def main(
-    config_path: Path,
-    train_dataset: Path = DEFAULT_TRAIN,
-    dev_dataset: Path = DEFAULT_DEV,
-    test_dataset: Path = DEFAULT_TEST,
-    splitters: List[str] = DEFAULT_SPLITS,
-    fit_model: bool = True,
-    vectors: str = "en_core_web_lg",
-    use_gpu: int = 0,
-    max_steps: int = 20000,
+    # fmt: off
+    config_path: Path = typer.Argument(..., help="Path to the configuration file for training"),
+    train_dataset: Path = typer.Option(DEFAULT_TRAIN, "--train-dataset", help="Path to the spaCy formatted training dataset"),
+    dev_dataset: Path = typer.Option(DEFAULT_DEV, "--dev-dataset", help="Path to the spaCy-formatted dev dataset"),
+    test_dataset: Path = typer.Option(DEFAULT_TEST, "--test-dataset", help="Path to the spaCy-formatted test dataset"),
+    splitters: List[str] = typer.Option(DEFAULT_SPLITS, "--splitters", "-sl", help="Splitters to demo", show_default=True),
+    fit_model: bool = typer.Option(True, "--fit-model", help="If set, then fit a model for both standard and adversarial splits"),
+    vectors: str = typer.Option("en_core_web_lg", "--vectors", "-v", help="Vectors to use to initialize the model with.", show_default=True),
+    base_model: Optional[str] = typer.Option(None, "--base-model", "-m", help="Path to spaCy trained model. If set, the texts will be piped through this model to get NER / MORPH attributes.", show_default=True),
+    use_gpu: int = typer.Option(0, "--use-gpu", "-g", help="GPU ID to use. Pass -1 to use the CPU", show_default=True),
+    max_steps: int = typer.Option(20000, "--max-steps", "-st", help="Number of steps for training"),
+    # fmt: on
 ):
     msg.info(f"Splitters: {','.join(splitters)}")
     train = _get_docs(train_dataset)
     dev = _get_docs(dev_dataset)
     test = _get_docs(test_dataset)
     rows = []  # keep track of the scores for reporting
+
+    if base_model:
+        msg.info(f"Base model was set to '{base_model}'.")
+        nlp = spacy.load(base_model)
+        train = nlp.pipe(train)
+        dev = nlp.pipe(dev)
+        test = nlp.pipe(test)
+        msg.good("Applied the model to the input texts")
 
     traindev = _combine_docs(train, dev)
     if fit_model:
