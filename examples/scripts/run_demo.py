@@ -46,9 +46,9 @@ def main(
     if base_model:
         msg.info(f"Base model was set to '{base_model}'.")
         nlp = spacy.load(base_model)
-        train = nlp.pipe(train)
-        dev = nlp.pipe(dev)
-        test = nlp.pipe(test)
+        train = list(nlp.pipe([doc.text for doc in train]))
+        dev = list(nlp.pipe([doc.text for doc in dev]))
+        test = list(nlp.pipe([doc.text for doc in test]))
         msg.good("Applied the model to the input texts")
 
     traindev = _combine_docs(train, dev)
