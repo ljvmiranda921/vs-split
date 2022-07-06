@@ -1,4 +1,5 @@
-from typing import Iterable, Optional, Tuple, Union
+from typing import Iterable, Optional, Tuple, Union, List
+from collections import Counter
 
 import catalogue
 import numpy as np
@@ -186,4 +187,62 @@ def doc_length(
             f" {len(docs_test)} >= {len(docs_train)}"
         )
 
+    return docs_train, docs_test
+
+
+@splitters.register("morph-attrs-split.v1")
+def morph_attrs_split(
+    docs: Iterable[Doc], attrs: List[str] = ["Number", "Person"], test_size: float = 0.2
+):
+    """
+    Perform adversarial splitting using a divergence maximization method
+    based on morphological attributes.
+
+    This method is loosely-based on the paper: '(Un)solving Morphological
+    Inflection: Lemma Overlap Artificially Inflates Models' Performance' by
+    Goldman et. al (ACL 2022). However, instead of focusing solely on lemma
+    splits, this method uses morphological attributes. The main motivation is
+    because splitting on lemma doesn't translate on standard texts.
+    """
+
+    def _get_attr_counts(doc: Doc) -> Counter:
+        attrs_freq_per_doc = []
+        for token in doc:
+            attrs_freq_per_doc.extend(list(token.morph.to_dict().keys()))
+        attrs_freq = Counter(attrs_freq_per_doc)
+        return attrs_freq
+
+    freqs = []
+    for doc in docs:
+        ctr = _get_attr_counts(doc)
+        # The proceeding line gives 0 if the attr doesn't exist in a particular doc
+        # This is due to Counter's behaviour. We don't need to handle cases where key
+        # is not in the dictionary
+        freq = [ctr[attr] for attr in attrs]
+        freqs.append(freq)
+
+    freqs = np.asarray(freqs)
+    threshold = np.percentile(freqs, 100 - (test_size * 100), axis=0)
+
+    # Get indices based on the computed threshold
+    all_idxs = set(range(len(docs)))
+    test_idxs = (freqs >= threshold).all(axis=1).nonzero()[0]
+    train_idxs = all_idxs - set(test_idxs)
+
+    actual_test_size = round(len(test_idxs) / len(docs), 2)
+    msg.text(
+        f"Found {len(test_idxs)} documents ({actual_test_size}) "
+        "that satisfy the split condition."
+    )
+    if actual_test_size < test_size:
+        msg.warn(
+            f"Desired test size ({test_size}) unachieved. Consider "
+            "loosening the split conditions for the MORPH attributes."
+        )
+
+    docs_train = _get_elements_by_idx(docs, train_idxs)
+    docs_test = _get_elements_by_idx(docs, test_idxs)
+    if len(docs_test) == 0:
+        msg.warn("Test set contains no elements!")
+    msg.text(f"Sizes after split: train ({len(docs_train)}), test ({len(docs_test)})")
     return docs_train, docs_test
