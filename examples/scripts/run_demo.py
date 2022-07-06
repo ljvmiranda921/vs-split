@@ -14,7 +14,7 @@ from spacy.tokens import Doc, DocBin
 from vs_split import spacy_train_test_split
 from wasabi import msg
 
-DEFAULT_SPLITS = ["wasserstein-spacy.v1", "doc-length.v1"]
+DEFAULT_SPLITS = ["wasserstein-spacy.v1", "doc-length.v1", "morph-attrs-split.v1"]
 CORPUS_PATH = Path().parent / "corpus"
 METRICS = ["ents_p", "ents_r", "ents_f"]
 
