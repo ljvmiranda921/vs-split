@@ -203,6 +203,12 @@ def morph_attrs_split(
     Goldman et. al (ACL 2022). However, instead of focusing solely on lemma
     splits, this method uses morphological attributes. The main motivation is
     because splitting on lemma doesn't translate on standard texts.
+
+    docs (List[Doc]): list of spaCy Doc objects to split.
+    attrs (List[str]): morphological attributes to split against.
+    test_size (float): the size of the test set for determining the split.
+
+    RETURNS the training and test spaCy Doc objects
     """
 
     def _get_attr_counts(doc: Doc) -> Counter:
