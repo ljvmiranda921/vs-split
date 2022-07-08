@@ -104,6 +104,7 @@ def main(
 
 def _add_morph_features(nlp, docs: List[Doc]) -> List[Doc]:
     # Run the pipeline as usual, but keep the original ents
+    msg.info("Adding morphological features")
     gold_ents = [doc.ents for doc in docs]
     # Set the ents of the resulting Docs to blank
     _new_docs = list(nlp.pipe([doc.text for doc in docs]))
