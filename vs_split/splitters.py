@@ -240,7 +240,7 @@ def morph_attrs_split(
 
     def _format_msg(attrs, threshold) -> str:
         _msg = [(a, t) for a, t in zip(attrs, threshold)]
-        _msg = [f"'{a}' ({t})" for a, t in _msg]
+        _msg = [f"'{a}' ({int(t)})" for a, t in _msg]
         msg = ", ".join(_msg)
         return msg
 
