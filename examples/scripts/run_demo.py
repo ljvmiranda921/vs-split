@@ -38,7 +38,7 @@ def main(
     splitters: List[str] = typer.Option(DEFAULT_SPLITS, "--splitters", "-sl", help="Splitters to demo", show_default=True),
     fit_model: bool = typer.Option(True, "--fit-model", help="If set, then fit a model for both standard and adversarial splits"),
     vectors: str = typer.Option("en_core_web_lg", "--vectors", "-v", help="Vectors to use to initialize the model with.", show_default=True),
-    base_model: Optional[str] = typer.Option(None, "--base-model", "-m", help="Path to spaCy trained model. If set, the texts will be piped through this model to get NER / MORPH attributes.", show_default=True),
+    base_model: Optional[str] = typer.Option(None, "--base-model", "-m", help="Path to spaCy trained model. If set, the texts will be piped through this model to get MORPH attributes.", show_default=True),
     use_gpu: int = typer.Option(0, "--use-gpu", "-g", help="GPU ID to use. Pass -1 to use the CPU", show_default=True),
     max_steps: int = typer.Option(20000, "--max-steps", "-st", help="Number of steps for training"),
     # fmt: on
@@ -51,11 +51,11 @@ def main(
 
     if base_model:
         msg.info(f"Base model was set to '{base_model}'.")
-        nlp = spacy.load(base_model)
-        train = list(nlp.pipe([doc.text for doc in train]))
-        dev = list(nlp.pipe([doc.text for doc in dev]))
-        test = list(nlp.pipe([doc.text for doc in test]))
-        msg.good("Applied the model to the input texts")
+        nlp = spacy.load(base_model, exclude=["ner"])
+        train = _add_morph_features(nlp, train)
+        dev = _add_morph_features(nlp, dev)
+        test = _add_morph_features(nlp, test)
+        msg.good("Applied morphologizer to the input texts")
 
     traindev = _combine_docs(train, dev)
     if fit_model:
@@ -100,6 +100,18 @@ def main(
         aligns = ("l", "r", "r")
         rows = _round_up_scores(rows)
         msg.table(rows, header=header, aligns=aligns, divider=True)
+
+
+def _add_morph_features(nlp, docs: List[Doc]) -> List[Doc]:
+    # Run the pipeline as usual, but keep the original ents
+    gold_ents = [doc.ents for doc in docs]
+    # Set the ents of the resulting Docs to blank
+    _new_docs = list(nlp.pipe([doc.text for doc in docs]))
+    new_docs: List[Doc] = []
+    for new_doc, gold_ent in zip(_new_docs, gold_ents):
+        new_doc.ents = gold_ent
+        new_docs.append(new_doc)
+    return new_docs
 
 
 def _fit_and_evaluate_model(
