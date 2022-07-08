@@ -86,6 +86,7 @@ def main(
                 max_steps=max_steps,
             )
             rows.append([split_id] + [adv_scores[metric] for metric in METRICS])
+            msg.good(f"Scores ({split_id}): {adv_scores}")
 
     # Report scores
     if rows:
