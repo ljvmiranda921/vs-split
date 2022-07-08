@@ -65,6 +65,7 @@ commands:
         --vectors ${vars.vectors} 
         --use-gpu ${vars.gpu_id}
         --max-steps ${vars.max_steps}
+        --base-model ${vars.vectors}
     deps:
       - corpus/en-wikineural-train.spacy
       - corpus/en-wikineural-dev.spacy
