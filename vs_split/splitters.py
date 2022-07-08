@@ -1,13 +1,16 @@
-from typing import Iterable, Optional, Tuple, Union, List, Dict
+import json
+import random
 from collections import Counter
 from pathlib import Path
-import json
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 import catalogue
 import numpy as np
+import spacy
+from spacy.language import Language
 from scipy import stats
 from sklearn import feature_extraction, neighbors
-from spacy.tokens import Doc
+from spacy.tokens import Doc, Span
 from wasabi import msg
 
 splitters = catalogue.create("vs_split", "splitters", entry_points=True)
@@ -278,26 +281,65 @@ def entity_switch(
     patterns: Optional[Dict[str, List[str]]] = None,
     patterns_file: Optional[Path] = None,
     test_size: Optional[float] = None,
+    lang: Optional[str] = None,
 ):
-    def _get_train_test(
-        docs: Iterable[Doc], test_size: float
-    ) -> Tuple[List[Doc], List[Doc]]:
-        if test_size:
-            msg.text(
-                f"Test size was provided ({test_size}), "
-                "will split the docs accordingly."
-            )
-            num_train = int(len(docs) * (1 - test_size))
-            train = docs[:num_train]
-            test = docs[num_train:]
-        else:
-            train = []
-            test = docs
-        return train, test
+    """
+    Manually perturb the test set by switching entities based on a given
+    dictionary of patterns.
 
-    train_docs, test_docs = _get_train_test(docs, test_size)
+    This work is based on the paper, 'Entity-Switched Datasets - An Approach to
+    Auditing the In-Domain Robustness of Named Entity Recognition Models' by
+    Agarwal et al., (ACL 2021). You can control which entity labels are switched
+    using a patterns dictionary.
+
+    The patterns dictionary should have the ent label as the key and a list of
+    strings as its values. For example, if we want to switch all 'ORG' entities
+    in the original document with values such as 'Bene Gesserit', 'Landsraad',
+    or 'Spacing Guild', then we should provide a dictionary that look like this:
+
+    patterns = {'ORG': ['Bene Gesserit', 'Landsraad', 'Spacing Guild']}
+
+    You can add as many patterns or entity labels in the dictionary. The pattern chosen
+    for substitution is done via random.choice.
+
+    Implementation-wise, the entity switching is done by recreating the spaCy
+    Doc object.  Note that the resulting Docs will only include the text and the
+    entity annotations. Any information from the previous pipeline (MORPHS,
+    etc.) will be lost.
+
+    docs (List[Doc]): list of spaCy Doc objects to split.
+    patterns: Optional[Dict[str, List[str]]]: dictionary of patterns for substitution.
+    patterns_file: Optional[Path]: alternative way of providing patterns via a JSON file.
+    test_size: Optional[float]: if provided, then the docs will be split further. Since entity-switching
+        is only needed for the test set, you can just pass the test documents in this function.
+    lang: Optional[str]: the language code to use for recreating the spaCy doc.
+
+    RETURNS the training and test spaCy Doc objects
+    """
+    if not lang:
+        d = random.choice(docs)
+        lang = d[0].vocab.lang
+        msg.text(f"Naively detected 'lang' as '{lang}'")
+
+    if test_size:
+        msg.text(
+            # fmt: off
+            f"Test size was provided ({test_size}), " 
+            "will split the docs accordingly."
+            # fmt: on
+        )
+        num_train = int(len(docs) * (1 - test_size))
+        train_docs, _test_docs = docs[:num_train], docs[num_train:]
+    else:
+        msg.text(
+            "Test size not provided, will assume that all docs passed "
+            "were test documents. Will return an empty list for training docs "
+            "([], List[Docs])."
+        )
+        train_docs, _test_docs = [], docs
+
     if patterns_file:
-        # Patterns file will always override the patterns
+        # Parameter 'patterns_file' will always override 'patterns'
         with patterns_file.open() as f:
             patterns = json.load(patterns)
 
@@ -309,6 +351,31 @@ def entity_switch(
             exits=1,
         )
 
-    # TODO: switch the entities
+    def _replace_ents(nlp: Language, doc: Doc, patterns: Dict[str, List[str]]) -> Doc:
+        nlp.add_pipe("merge_entities")
+        merged_ents = [(t.text, t.ent_type_) for t in nlp(doc)]
+
+        new_merged_ents: List[Tuple[str, str]] = []
+        for text, ent in merged_ents:
+            if ent and (ent in patterns.keys()):
+                new_text = random.choice(patterns[ent])
+                new_merged_ents.append((new_text, ent))
+            else:
+                new_merged_ents.append((text, ent))
+
+        new_texts = [text for text, _ in new_merged_ents]
+        new_docs: List[Doc] = list(nlp.pipe(new_texts))
+        for new_doc, (_, ent) in zip(new_docs, new_merged_ents):
+            if ent:
+                new_doc.set_ents([Span(new_doc, 0, len(new_doc), ent)])
+
+        merged_doc = Doc.from_docs(new_docs)
+        return merged_doc
+
+    test_docs: List[Doc] = []
+    for test_doc in _test_docs:
+        nlp = spacy.blank(lang)
+        sub_test_doc = _replace_ents(nlp, doc=test_doc, patterns=patterns)
+        test_docs.append(sub_test_doc)
 
     return train_docs, test_docs
