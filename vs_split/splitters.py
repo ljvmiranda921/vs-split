@@ -230,6 +230,22 @@ def morph_attrs_split(
     freqs = np.asarray(freqs)
     threshold = np.percentile(freqs, 100 - (test_size * 100), axis=0)
 
+    if not np.any(freqs):
+        msg.fail(
+            "No MORPH frequencies found. It's probably because you haven't run "
+            "a trained pipeline through your texts. Try nlp.pipe([doc.text for "
+            "doc in docs]) where nlp is a trained spaCy model (e.g. en_core_web_md).",
+            exits=1,
+        )
+
+    def _format_msg(attrs, threshold) -> str:
+        _msg = [(a, t) for a, t in zip(attrs, threshold)]
+        _msg = [f"'{a}' ({t})" for a, t in _msg]
+        msg = ", ".join(_msg)
+        return msg
+
+    msg.text(f"Splitting on the following threshold/s: {_format_msg(attrs, threshold)}")
+
     # Get indices based on the computed threshold
     all_idxs = set(range(len(docs)))
     test_idxs = (freqs >= threshold).all(axis=1).nonzero()[0]
