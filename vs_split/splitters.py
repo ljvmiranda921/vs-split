@@ -1,5 +1,7 @@
-from typing import Iterable, Optional, Tuple, Union, List
+from typing import Iterable, Optional, Tuple, Union, List, Dict
 from collections import Counter
+from pathlib import Path
+import json
 
 import catalogue
 import numpy as np
@@ -268,3 +270,45 @@ def morph_attrs_split(
         msg.warn("Test set contains no elements!")
     msg.text(f"Sizes after split: train ({len(docs_train)}), test ({len(docs_test)})")
     return docs_train, docs_test
+
+
+@splitters.register("entity-switch.v1")
+def entity_switch(
+    docs: Iterable[Doc],
+    patterns: Optional[Dict[str, List[str]]] = None,
+    patterns_file: Optional[Path] = None,
+    test_size: Optional[float] = None,
+):
+    def _get_train_test(
+        docs: Iterable[Doc], test_size: float
+    ) -> Tuple[List[Doc], List[Doc]]:
+        if test_size:
+            msg.text(
+                f"Test size was provided ({test_size}), "
+                "will split the docs accordingly."
+            )
+            num_train = int(len(docs) * (1 - test_size))
+            train = docs[:num_train]
+            test = docs[num_train:]
+        else:
+            train = []
+            test = docs
+        return train, test
+
+    train_docs, test_docs = _get_train_test(docs, test_size)
+    if patterns_file:
+        # Patterns file will always override the patterns
+        with patterns_file.open() as f:
+            patterns = json.load(patterns)
+
+    if not patterns:
+        msg.fail(
+            "Patterns file for entity-switching is empty! Did you "
+            "provide a JSONL `patterns_file` or passed a dictionary in "
+            "the `patterns` parameter?",
+            exits=1,
+        )
+
+    # TODO: switch the entities
+
+    return train_docs, test_docs
