@@ -3,7 +3,7 @@
 import itertools
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import spacy
 import typer
@@ -11,8 +11,9 @@ from spacy.cli._util import parse_config_overrides
 from spacy.cli.evaluate import evaluate as spacy_evaluate
 from spacy.cli.train import train as spacy_train
 from spacy.tokens import Doc, DocBin
-from vs_split import spacy_train_test_split
 from wasabi import msg
+
+from vs_split import spacy_train_test_split
 
 # fmt: off
 DEFAULT_SPLITS = [
