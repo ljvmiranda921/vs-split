@@ -73,8 +73,14 @@ def main(
     for split_id in splitters:
 
         msg.divider(text=split_id)
-        dataset = _combine_docs(train, dev, test)
-        ntrain, ntest = spacy_train_test_split(dataset, split_id=split_id)
+
+        if split_id == "entity-switch.v1":
+            # This splitter only needs to work on the test set
+            _, ntest = spacy_train_test_split(test, split_id=split_id)
+            ntrain = _combine_docs(train, dev)
+        else:
+            dataset = _combine_docs(train, dev, test)
+            ntrain, ntest = spacy_train_test_split(dataset, split_id=split_id)
 
         if fit_model:
             adv_scores = _fit_and_evaluate_model(
@@ -121,11 +127,11 @@ def _fit_and_evaluate_model(
     """
 
     def _split_train_dev(
-        traindev: List[Doc], split_size: float = 0.8
+        traindev: List[Doc], train_size: float = 0.8
     ) -> Tuple[List[Doc], List[Doc]]:
         """Split the training set into train and dev"""
-        train_size = int(len(traindev) * split_size)
-        return traindev[:train_size], traindev[train_size:]
+        num_train = int(len(traindev) * train_size)
+        return traindev[:num_train], traindev[num_train:]
 
     def _save_docs_to_tmp(
         train: List[Doc], dev: List[Doc], test: List[Doc], output_dir: Path
