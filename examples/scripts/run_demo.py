@@ -13,6 +13,7 @@ from spacy.cli.train import train as spacy_train
 from spacy.tokens import Doc, DocBin
 from wasabi import msg
 
+from examples.scripts.entity_switch_patterns import get_id_ph_names_pattern
 from vs_split import spacy_train_test_split
 
 # fmt: off
@@ -77,7 +78,9 @@ def main(
 
         if split_id == "entity-switch.v1":
             # This splitter only needs to work on the test set
-            _, ntest = spacy_train_test_split(test, split_id=split_id)
+            _, ntest = spacy_train_test_split(
+                test, split_id=split_id, patterns=get_id_ph_names_pattern()
+            )
             ntrain = _combine_docs(train, dev)
         else:
             dataset = _combine_docs(train, dev, test)
