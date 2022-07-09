@@ -302,6 +302,9 @@ def entity_switch(
     You can add as many patterns or entity labels in the dictionary. The pattern chosen
     for substitution is done via random.choice.
 
+    Note that for PERSON names, this splitter does not differentiate between
+    first or full names. It just performs a drop-in replacement.
+
     Implementation-wise, the entity switching is done by recreating the spaCy
     Doc object.  Note that the resulting Docs will only include the text and the
     entity annotations. Any information from the previous pipeline (MORPHS,
