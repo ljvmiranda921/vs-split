@@ -7,9 +7,9 @@ from typing import Dict, Iterable, List, Optional, Tuple, Union
 import catalogue
 import numpy as np
 import spacy
-from spacy.language import Language
 from scipy import stats
 from sklearn import feature_extraction, neighbors
+from spacy.language import Language
 from spacy.tokens import Doc, Span
 from wasabi import msg
 
