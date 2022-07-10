@@ -18,9 +18,10 @@ from vs_split import spacy_train_test_split
 
 # fmt: off
 DEFAULT_SPLITS = [
-    "wasserstein-spacy.v1", 
-    "doc-length.v1", 
-    "morph-attrs-split.v1"
+    "wasserstein-spacy.v1",
+    "doc-length.v1",
+    "morph-attrs-split.v1",
+    "entity-switch.v1"
 ]
 # fmt: on
 CORPUS_PATH = Path().parent / "corpus"
