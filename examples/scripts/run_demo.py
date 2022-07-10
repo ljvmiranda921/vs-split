@@ -13,7 +13,7 @@ from spacy.cli.train import train as spacy_train
 from spacy.tokens import Doc, DocBin
 from wasabi import msg
 
-from examples.scripts.entity_switch_patterns import get_id_ph_names_pattern
+from ..scripts.entity_switch_patterns import get_id_ph_names_pattern
 from vs_split import spacy_train_test_split
 
 # fmt: off
