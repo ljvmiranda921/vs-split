@@ -39,7 +39,6 @@ def main(
     dev_dataset: Path = typer.Option(DEFAULT_DEV, "--dev-dataset", help="Path to the spaCy-formatted dev dataset"),
     test_dataset: Path = typer.Option(DEFAULT_TEST, "--test-dataset", help="Path to the spaCy-formatted test dataset"),
     splitters: List[str] = typer.Option(DEFAULT_SPLITS, "--splitters", "-sl", help="Splitters to demo", show_default=True),
-    fit_model: bool = typer.Option(True, "--fit-model", help="If set, then fit a model for both standard and adversarial splits"),
     vectors: str = typer.Option("en_core_web_lg", "--vectors", "-v", help="Vectors to use to initialize the model with.", show_default=True),
     base_model: Optional[str] = typer.Option(None, "--base-model", "-m", help="Path to spaCy trained model. If set, the texts will be piped through this model to get MORPH attributes.", show_default=True),
     use_gpu: int = typer.Option(0, "--use-gpu", "-g", help="GPU ID to use. Pass -1 to use the CPU", show_default=True),
@@ -51,27 +50,18 @@ def main(
     dev = _get_docs(dev_dataset)
     test = _get_docs(test_dataset)
     rows = []  # keep track of the scores for reporting
-
-    if base_model:
-        msg.info(f"Base model was set to '{base_model}'.")
-        nlp = spacy.load(base_model, exclude=["ner"])
-        train = _add_morph_features(nlp, train)
-        dev = _add_morph_features(nlp, dev)
-        test = _add_morph_features(nlp, test)
-        msg.good("Applied morphologizer to the input texts")
-
     traindev = _combine_docs(train, dev)
-    if fit_model:
-        msg.info("Getting baseline performance for standard split")
-        std_scores = _fit_and_evaluate_model(
-            traindev,
-            test,
-            config_path,
-            vectors=vectors,
-            use_gpu=use_gpu,
-            max_steps=max_steps,
-        )
-        rows.append(["standard"] + [std_scores[metric] for metric in METRICS])
+
+    msg.info("Getting baseline performance for standard split")
+    std_scores = _fit_and_evaluate_model(
+        traindev,
+        test,
+        config_path,
+        vectors=vectors,
+        use_gpu=use_gpu,
+        max_steps=max_steps,
+    )
+    rows.append(["standard"] + [std_scores[metric] for metric in METRICS])
 
     for split_id in splitters:
 
@@ -83,22 +73,31 @@ def main(
                 test, split_id=split_id, patterns=get_id_ph_names_pattern()
             )
             ntrain = _combine_docs(train, dev)
+        elif split_id == "morph-attrs-split.v1":
+            # This splitter needs morphological features aside from entity annotations
+            msg.info(f"Base model was set to '{base_model}'.")
+            nlp = spacy.load(base_model, exclude=["ner"])
+            train = _add_morph_features(nlp, train)
+            dev = _add_morph_features(nlp, dev)
+            test = _add_morph_features(nlp, test)
+            msg.info("Applied morphologizer to the input texts")
+            dataset = _combine_docs(train, dev, test)
+            ntrain, ntest = spacy_train_test_split(dataset, split_id=split_id)
         else:
             dataset = _combine_docs(train, dev, test)
             ntrain, ntest = spacy_train_test_split(dataset, split_id=split_id)
 
-        if fit_model:
-            adv_scores = _fit_and_evaluate_model(
-                ntrain,
-                ntest,
-                config_path,
-                vectors=vectors,
-                use_gpu=use_gpu,
-                max_steps=max_steps,
-            )
-            rows.append([split_id] + [adv_scores[metric] for metric in METRICS])
-            scores_report = {metric.upper(): adv_scores[metric] for metric in METRICS}
-            msg.good(f"Scores ({split_id}): {scores_report}")
+        adv_scores = _fit_and_evaluate_model(
+            ntrain,
+            ntest,
+            config_path,
+            vectors=vectors,
+            use_gpu=use_gpu,
+            max_steps=max_steps,
+        )
+        rows.append([split_id] + [adv_scores[metric] for metric in METRICS])
+        scores_report = {metric.upper(): adv_scores[metric] for metric in METRICS}
+        msg.good(f"Scores ({split_id}): {scores_report}")
 
     # Report scores
     if rows:
