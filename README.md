@@ -84,6 +84,11 @@ type signature of the other splitters.
 
 ### More examples
 
+You can find more in the
+[`examples/`](https://github.com/ljvmiranda921/vs-split/tree/main/examples)
+directory. It contains a sample project that runs the [English WikiNeural
+dataset](https://paperswithcode.com/dataset/wikineural) on various spaCy
+splitters.
 
 ## 🎛 API
 
