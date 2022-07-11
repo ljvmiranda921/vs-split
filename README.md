@@ -2,7 +2,7 @@
 
 Have you ever encountered a problem where **your model works well in your test set
 but doesn't perform well in the wild?**  It's likely because your test set does
-not reflect the reality of your domain, overestimating our model's performance.
+not reflect the reality of your domain, overestimating your model's performance.
 
 This library provides **alternative ways to split and sanity-check your datasets**,
 and ensure that they're robust once you deploy them into production.
