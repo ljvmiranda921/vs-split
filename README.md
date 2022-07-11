@@ -29,7 +29,7 @@ The `vs-split` library exposes two main functions: (1) **`train_test_split`** th
 accepts [NumPy
 arrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html) of
 your features and labels, and (2) **`spacy_train_test_split`** that accepts a list
-of [spaCy Doc objects](https://spacy.io/api/doc).  For both functions, you can
+of [spaCy Doc objects](https://spacy.io/api/doc).[^1]  For both functions, you can
 provide the type of split in the `split_id` parameter (c.f. [Splitters
 Catalogue](#splitters-catalogue)) and pass custom keyword-arguments.
 
@@ -57,3 +57,5 @@ an arbitrary number of iterables, and the keyword parameters are different too.
 
 
 ### Splitters Catalogue
+
+[^1]: vs-split has first-class support for spaCy.
