@@ -75,10 +75,12 @@ def random_spacy(docs: Iterable[Doc], train_size: float):
     return train_docs, test_docs
 ```
 
-You are given freedom to return any value / object in your splitter
-implementation&mdash;i.e, there's no function that enforces you to follow the
-blueprint. However, for consistency, it's advisable to follow the type signature
-of the other splitters.
+Under the hood, `vs-split` uses
+[`catalogue`](https://github.com/explosion/catalogue) to manage the functions
+you registered. You are given freedom to return any value / object in your
+splitter implementation&mdash;i.e, there's no function that enforces you to
+follow the blueprint. However, for consistency, it's advisable to follow the
+type signature of the other splitters.
 
 ### More examples
 
