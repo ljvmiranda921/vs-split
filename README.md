@@ -27,13 +27,14 @@ python setup.py install
 
 ## Usage
 
-The `vs-split` library exposes two main functions: (1) **`train_test_split`** that
-accepts [NumPy
-arrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html) of
-your features and labels, and (2) **`spacy_train_test_split`** that accepts a list
-of [spaCy Doc objects](https://spacy.io/api/doc).[^2]  For both functions, you can
-provide the type of split in the `split_id` parameter (c.f. [Splitters
-Catalogue](#splitters-catalogue)) and pass custom keyword-arguments.
+The `vs-split` library exposes two main functions: 
+
+- **`train_test_split`** that accepts [NumPy arrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html) of your features and labels, and 
+- **`spacy_train_test_split`** that accepts a list of [spaCy Doc objects](https://spacy.io/api/doc).[^2]  
+
+For both functions, you can provide the type of split in the `split_id`
+parameter (c.f. [splitters catalogue](#splitters-catalogue)) and pass custom
+keyword-arguments.
 
 ```python
 from vs_split import train_test_split, spacy_train_test_split
