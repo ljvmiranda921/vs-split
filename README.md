@@ -2,10 +2,12 @@
 
 Have you ever encountered a problem where **your model works well in your test set
 but doesn't perform well in the wild?**  It's likely because your test set does
-not reflect the reality of your domain, overestimating your model's performance.
+not reflect the reality of your domain, overestimating your model's performance.[^1]
 
 This library provides **alternative ways to split and sanity-check your datasets**,
 and ensure that they're robust once you deploy them into production.
+
+[^1]: Check out my blog post, ['Your train-test split may be doing you a disservice'](https://ljvmiranda921.github.io/2022/08/30/adversarial-splits/), for a technical overview of this problem.
 
 ## Install
 
@@ -29,7 +31,7 @@ The `vs-split` library exposes two main functions: (1) **`train_test_split`** th
 accepts [NumPy
 arrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html) of
 your features and labels, and (2) **`spacy_train_test_split`** that accepts a list
-of [spaCy Doc objects](https://spacy.io/api/doc).[^1]  For both functions, you can
+of [spaCy Doc objects](https://spacy.io/api/doc).[^2]  For both functions, you can
 provide the type of split in the `split_id` parameter (c.f. [Splitters
 Catalogue](#splitters-catalogue)) and pass custom keyword-arguments.
 
@@ -48,6 +50,8 @@ docs_train, docs_test = spacy_train_test_split(docs, split_id="wasserstein-spacy
 > but it does not.  Unlike the latter, `vs_split.train_test_split` doesn't expect
 > an arbitrary number of iterables, and the keyword parameters are different too.
 
+[^2]: vs-split has first-class support for spaCy. The main reason is that I've been using this for some internal robustness experiments to test some of our [pipeline components](https://spacy.io/usage/processing-pipelines).
+
 ### Registering your own splitters
 
 
@@ -58,5 +62,3 @@ docs_train, docs_test = spacy_train_test_split(docs, split_id="wasserstein-spacy
 
 
 ### Splitters Catalogue
-
-[^1]: vs-split has first-class support for spaCy.
