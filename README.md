@@ -7,7 +7,7 @@ not reflect the reality of your domain, overestimating your model's performance.
 This library provides **alternative ways to split and sanity-check your datasets**,
 and ensure that they're robust once you deploy them into production.
 
-[^1]: Check out my blog post, ['Your train-test split may be doing you a disservice'](https://ljvmiranda921.github.io/2022/08/30/adversarial-splits/), for a technical overview of this problem.
+[^1]: Check out my blog post, [*Your train-test split may be doing you a disservice*](https://ljvmiranda921.github.io/2022/08/30/adversarial-splits/), for a technical overview of this problem.
 
 ## Install
 
