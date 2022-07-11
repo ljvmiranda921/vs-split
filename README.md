@@ -1,4 +1,4 @@
-# ⚔️ vs-split: a Python library for creating adversarial splits
+# ⚔️ vs-split: a library for creating adversarial splits
 
 Have you ever encountered a problem where **your model works well in your test set
 but doesn't perform well in the wild?**  It's likely because your test set does
