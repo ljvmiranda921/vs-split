@@ -47,6 +47,8 @@ The `vs-split` library might look like it has a similar API with scikit-learn's
 `vs_split.train_test_split` doesn't expect an arbitrary number of iterables, and
 the keyword parameters are different too.
 
+### Registering your own splitters
+
 
 ## API
 
