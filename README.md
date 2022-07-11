@@ -9,7 +9,7 @@ and ensure they're robust once you deploy them into production.
 
 [^1]: Check out my blog post, [*Your train-test split may be doing you a disservice*](https://ljvmiranda921.github.io/2022/08/30/adversarial-splits/), for a technical overview of this problem.
 
-## Install
+## ⏳ Installation
 
 You can install `vs-split` via `pip`
 
@@ -25,7 +25,7 @@ cd vs-split
 python setup.py install
 ```
 
-## Usage
+## 👩‍💻 Usage
 
 The library exposes two main functions: 
 
@@ -83,7 +83,7 @@ of the other splitters.
 ### More examples
 
 
-## API
+## 🎛 API
 
 
 ### Splitters Catalogue
