@@ -29,8 +29,8 @@ python setup.py install
 
 The library exposes two main functions: 
 
-- **`train_test_split`** that accepts [NumPy arrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html) of your features and labels, and 
-- **`spacy_train_test_split`** that accepts a list of [spaCy Doc objects](https://spacy.io/api/doc).[^2]  
+- **`train_test_split(X: Iterable, y: Iterable, split_id: str, **attrs)`** that accepts [NumPy arrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html) of your features and labels, and 
+- **`spacy_train_test_split(docs: Iterable[Doc], split_id: str, **attrs)`** that accepts a list of [spaCy Doc objects](https://spacy.io/api/doc).[^2]  
 
 For both functions, you can provide the type of split in the `split_id`
 parameter (c.f. [splitters catalogue](#splitters-catalogue)) and pass custom
@@ -54,6 +54,20 @@ docs_train, docs_test = spacy_train_test_split(docs, split_id="wasserstein-spacy
 [^2]: vs-split has first-class support for spaCy. The main reason is that I've been using this for some internal robustness experiments to test some of our [pipeline components](https://spacy.io/usage/processing-pipelines).
 
 ### Registering your own splitters
+
+You can also register custom splitters via the `splitters` catalogue:
+
+```python
+import random
+from vs_split.splitters import splitters
+
+@splitters.register("random-spacy.v1")
+def random_spacy(docs, train_size:):
+    pass
+
+```
+
+
 
 
 ### More examples
