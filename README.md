@@ -29,8 +29,8 @@ python setup.py install
 
 The library exposes two main functions: 
 
-- **`train_test_split(X: Iterable, y: Iterable, split_id: str, **attrs)`** that accepts [NumPy arrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html) of your features and labels, and 
-- **`spacy_train_test_split(docs: Iterable[Doc], split_id: str, **attrs)`** that accepts a list of [spaCy Doc objects](https://spacy.io/api/doc).[^2]  
+- **`train_test_split(X: Iterable, y: Iterable, split_id: str, **attrs)`** that accepts [NumPy arrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html) of your features and labels; and&mdash; 
+- **`spacy_train_test_split(docs: Iterable[Doc], split_id: str, **attrs)`** that accepts an iterable of [spaCy Doc objects](https://spacy.io/api/doc).[^2] spaCy is a Python library for natural language processing, and the Doc object is one of its core data structures. This function is useful if you're working on linguistic data.  
 
 For both functions, you can provide the type of split in the `split_id`
 parameter (c.f. [splitters catalogue](#splitters-catalogue)) and pass custom
