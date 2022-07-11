@@ -4,8 +4,8 @@ Have you ever encountered a problem where **your model works well in your test s
 but doesn't perform well in the wild?**  It's likely because your test set does
 not reflect the reality of your domain, overestimating your model's performance.[^1]
 
-This library provides **alternative ways to split and sanity-check your datasets**,
-and ensure that they're robust once you deploy them into production.
+This library provides **alternative ways to split and sanity-check your datasets**
+and ensure they're robust once you deploy them into production.
 
 [^1]: Check out my blog post, [*Your train-test split may be doing you a disservice*](https://ljvmiranda921.github.io/2022/08/30/adversarial-splits/), for a technical overview of this problem.
 
