@@ -25,21 +25,21 @@ python setup.py install
 
 ## Usage
 
-The `vs-split` library exposes two main functions: (1) `train_test_split` that
+The `vs-split` library exposes two main functions: (1) **`train_test_split`** that
 accepts [NumPy
 arrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html) of
-your features and labels, and (2) `spacy_train_test_split` that accepts a list
-of [spaCy Doc](https://spacy.io/api/doc) objects.  For both functions, you can
+your features and labels, and (2) **`spacy_train_test_split`** that accepts a list
+of [spaCy Doc objects](https://spacy.io/api/doc).  For both functions, you can
 provide the type of split in the `split_id` parameter (c.f. [Splitters
-Catalogue](#splitters-catalogue)).
+Catalogue](#splitters-catalogue)) and pass custom keyword-arguments.
 
 ```python
 from vs_split import train_test_split, spacy_train_test_split
 
 # For most datasets
-X_train, y_train, X_test, y_test = train_test_split(X_data, y_data, split="wasserstein.v1")
+X_train, y_train, X_test, y_test = train_test_split(X_data, y_data, split_id="wasserstein.v1")
 # For spaCy Doc objects
-docs_train, docs_test = spacy_train_test_split(docs, split="wasserstein-spacy.v1")
+docs_train, docs_test = spacy_train_test_split(docs, split_id="wasserstein-spacy.v1")
 ```
 
 The `vs-split` library might look like it has a similar API with [scikit-learn's
