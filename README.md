@@ -55,20 +55,30 @@ docs_train, docs_test = spacy_train_test_split(docs, split_id="wasserstein-spacy
 
 ### Registering your own splitters
 
-You can also register custom splitters via the `splitters` catalogue:
+You can also register custom splitters via the `splitters` catalogue. Here's an
+example of a splitter, `random-spacy.v1` that splits a list of spaCy Doc objects
+given a training set size:
 
 ```python
 import random
+from typing import Iterable
+
+from spacy.tokens import Doc
 from vs_split.splitters import splitters
 
 @splitters.register("random-spacy.v1")
-def random_spacy(docs, train_size:):
-    pass
-
+def random_spacy(docs: Iterable[Doc], train_size: float):
+    random.shuffle(docs)
+    num_train = int(len(docs) * train_size)
+    train_docs = docs[:num_train]
+    test_docs = docs[num_train:]
+    return train_docs, test_docs
 ```
 
-
-
+You are given freedom to return any value / object in your splitter
+implementation&mdash;i.e, there's no function that enforces you to follow the
+blueprint. However, for consistency, it's advisable to follow the type signature
+of the other splitters.
 
 ### More examples
 
