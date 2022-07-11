@@ -42,10 +42,11 @@ X_train, y_train, X_test, y_test = train_test_split(X_data, y_data, split_id="wa
 docs_train, docs_test = spacy_train_test_split(docs, split_id="wasserstein-spacy.v1")
 ```
 
-The `vs-split` library might look like it has a similar API with [scikit-learn's
-`train_test_split`](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html),
-but it does not.  Unlike the latter, `vs_split.train_test_split` doesn't expect
-an arbitrary number of iterables, and the keyword parameters are different too.
+> **Note**
+> The `vs-split` library might look like it has a similar API with [scikit-learn's
+> `train_test_split`](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html),
+> but it does not.  Unlike the latter, `vs_split.train_test_split` doesn't expect
+> an arbitrary number of iterables, and the keyword parameters are different too.
 
 ### Registering your own splitters
 
