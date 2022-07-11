@@ -27,7 +27,7 @@ python setup.py install
 
 ## Usage
 
-The `vs-split` library exposes two main functions: 
+The library exposes two main functions: 
 
 - **`train_test_split`** that accepts [NumPy arrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html) of your features and labels, and 
 - **`spacy_train_test_split`** that accepts a list of [spaCy Doc objects](https://spacy.io/api/doc).[^2]  
@@ -46,10 +46,10 @@ docs_train, docs_test = spacy_train_test_split(docs, split_id="wasserstein-spacy
 ```
 
 > **Note**
-> The `vs-split` library might look like it has a similar API with [scikit-learn's
+> It might look like `vs-split` has a similar API with [scikit-learn's
 > `train_test_split`](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html),
-> but it does not.  Unlike the latter, `vs_split.train_test_split` doesn't expect
-> an arbitrary number of iterables, and the keyword parameters are different too.
+> but that's not the case.  Unlike the latter, `vs_split.train_test_split` doesn't expect
+> an arbitrary number of iterables, and the keyword parameters are also different.
 
 [^2]: vs-split has first-class support for spaCy. The main reason is that I've been using this for some internal robustness experiments to test some of our [pipeline components](https://spacy.io/usage/processing-pipelines).
 
