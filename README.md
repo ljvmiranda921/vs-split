@@ -1,13 +1,11 @@
-# ⚔️ vs-split
+# ⚔️ vs-split: a Python library for creating adversarial splits
 
-**Vs Split** is a Python library for creating adversarial splits.
-
-Have you ever encountered a problem where your model works well in your test set
-but doesn't perform well in the wild?  It's likely because your test set does
+Have you ever encountered a problem where **your model works well in your test set
+but doesn't perform well in the wild?**  It's likely because your test set does
 not reflect the reality of your domain, overestimating our model's performance.
 
-This library provides alternative ways to split and sanity-check your datasets,
-and ensure that they're robust once we deploy them into the wild.
+This library provides **alternative ways to split and sanity-check your datasets**,
+and ensure that they're robust once you deploy them into production.
 
 ## Install
 
