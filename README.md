@@ -210,6 +210,13 @@ chosen for substitution is done via
 Lastly, for `PER` entities, this splitter **does not** differentiate between
 first or full names. It just performs a drop-in replacement.
 
+> **Note**
+> Implementation-wise, the entity switching is done by recreating the spaCy
+> Doc object.  Note that the resulting Docs will only include the text and the
+> entity annotations. Any information from the previous pipeline (MORPHS,
+> etc.) will be lost.
+
+
 | Argument    | Type         | Description                                            |
 |-------------|--------------|--------------------------------------------------------|
 | `*docs`     | Iterable[Doc]| An iterable of spaCy Doc objects to split.             |
