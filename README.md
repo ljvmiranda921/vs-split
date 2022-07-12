@@ -200,14 +200,14 @@ the original document with values such as `Bene Gesserit`, `Landsraad`, or
 `Spacing Guild`, then we should provide a dictionary that look like this:
 
 ```python
+# An example patterns file
 patterns = {'ORG': ['Bene Gesserit', 'Landsraad', 'Spacing Guild']}
 ```
 
 You can add as many patterns or entity labels in the dictionary. The pattern
 chosen for substitution is done via
 [`random.choice`](https://docs.python.org/3/library/random.html#random.choice).
-
-Note that for `PER` names, this splitter **does not** differentiate between
+Lastly, for `PER` entities, this splitter **does not** differentiate between
 first or full names. It just performs a drop-in replacement.
 
 | Argument    | Type         | Description                                            |
