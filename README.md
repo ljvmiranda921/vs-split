@@ -182,3 +182,37 @@ on lemma doesn't translate on standard texts.
 | `attrs`     | List[str]     | Morphological attributes to split against. Default is `["Number", "Person"]`.
 | `test_size` | Optional[float]      | The size of the test set for determining the split. Defaults to `0.1`.    |
 | **RETURNS** | Tuple[Iterable[Doc], Iterable[Doc]] | The training and testing spaCy Doc objects. |
+
+
+### <kbd>vs_split.splitters</kbd> `entity-switch.v1`
+
+Manually perturb the test set by switching entities based on a given
+dictionary of patterns.
+
+This work is based on the paper, '[Entity-Switched Datasets - An Approach to
+Auditing the In-Domain Robustness of Named Entity Recognition
+Models](https://arxiv.org/abs/2004.04123)' by Agarwal et al. You can control
+which entity labels are switched using a **patterns dictionary**.
+
+The patterns dictionary should have **the entity label as the key and a list of
+strings as its values.** For example, if we want to switch all `ORG` entities in
+the original document with values such as `Bene Gesserit`, `Landsraad`, or
+`Spacing Guild`, then we should provide a dictionary that look like this:
+
+```python
+patterns = {'ORG': ['Bene Gesserit', 'Landsraad', 'Spacing Guild']}
+```
+
+You can add as many patterns or entity labels in the dictionary. The pattern
+chosen for substitution is done via
+[`random.choice`](https://docs.python.org/3/library/random.html#random.choice).
+
+Note that for `PER` names, this splitter **does not** differentiate between
+first or full names. It just performs a drop-in replacement.
+
+| Argument    | Type         | Description                                            |
+|-------------|--------------|--------------------------------------------------------|
+| `*docs`     | Iterable[Doc]| An iterable of spaCy Doc objects to split.             |
+| `*patterns` | Dict[str, List[str]] | Dictionary of patterns for substitution.             |
+| `test_size` | Optional[float]      | If provided, then the docs will be split further. Since entity-switching is only needed for the test set, you can just pass the test documents in this function. Defaults to `None`.    |
+| **RETURNS** | Tuple[Iterable[Doc], Iterable[Doc]] | The training and testing spaCy Doc objects. |
