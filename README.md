@@ -149,3 +149,19 @@ spaCy-compatible version of `wasserstein.v1`. If no vectors were found in the
 | `min_df`    | Union[int, float] | remove terms that appear too infrequently given a threshold. Defaults to `0.10`. | 
 | `n_jobs`    | Optional[int]   | Number of parallel jobs to run for neighbor search. Defaults to `-1` (use all CPUs). |
 | **RETURNS** | Tuple[Iterable[Doc], Iterable[Doc]] | The training and testing spaCy Doc objects. |
+
+
+### <kbd>vs_split.splitters</kbd> `doc-length.v1`
+
+Heuristic split based on document length.
+
+By default, it looks for a sentence length threshold, and puts all the longer
+sentences in the test split. The threshold is chosen so that approximately 10%
+of the data ends up in the test set. 
+
+| Argument    | Type         | Description                                            |
+|-------------|--------------|--------------------------------------------------------|
+| `*docs`     | Iterable[Doc]| An iterable of spaCy Doc objects to split.             |
+| `test_size` | Optional[float]      | The size of the test set for determining the split. Defaults to `0.1`.    |
+| `length_threshold` | Optional[int] | Arbitrary length to split the dataset against. Defaults to `None`. |
+| **RETURNS** | Tuple[Iterable[Doc], Iterable[Doc]] | The training and testing spaCy Doc objects. |
