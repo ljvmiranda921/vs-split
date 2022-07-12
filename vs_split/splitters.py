@@ -201,8 +201,7 @@ def morph_attrs_split(
     docs: Iterable[Doc], attrs: List[str] = ["Number", "Person"], test_size: float = 0.2
 ):
     """
-    Perform adversarial splitting using a divergence maximization method
-    based on morphological attributes.
+    Perform a heuristic split based on morphological attributes.
 
     This method is loosely-based on the paper: '(Un)solving Morphological
     Inflection: Lemma Overlap Artificially Inflates Models' Performance' by

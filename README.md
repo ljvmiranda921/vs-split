@@ -165,3 +165,20 @@ of the data ends up in the test set.
 | `test_size` | Optional[float]      | The size of the test set for determining the split. Defaults to `0.1`.    |
 | `length_threshold` | Optional[int] | Arbitrary length to split the dataset against. Defaults to `None`. |
 | **RETURNS** | Tuple[Iterable[Doc], Iterable[Doc]] | The training and testing spaCy Doc objects. |
+
+### <kbd>vs_split.splitters</kbd> `morph-attrs-split.v1`
+
+Perform a heuristic split based on morphological attributes.
+
+This method is loosely-based on the paper: '[(Un)solving Morphological Inflection: Lemma Overlap Artificially Inflates Models' Performance](https://aclanthology.org/2022.acl-short.96/)' by Goldman
+et. al (ACL 2022). However, instead of focusing solely on lemma splits, this
+method uses morphological attributes. The main motivation is because splitting
+on lemma doesn't translate on standard texts.
+
+
+| Argument    | Type         | Description                                            |
+|-------------|--------------|--------------------------------------------------------|
+| `*docs`     | Iterable[Doc]| An iterable of spaCy Doc objects to split.             |
+| `attrs`     | List[str]     | Morphological attributes to split against. Default is `["Number", "Person"]`.
+| `test_size` | Optional[float]      | The size of the test set for determining the split. Defaults to `0.1`.    |
+| **RETURNS** | Tuple[Iterable[Doc], Iterable[Doc]] | The training and testing spaCy Doc objects. |
