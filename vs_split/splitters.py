@@ -94,7 +94,8 @@ def wasserstein_spacy(
     test_size (float): the number of neighbors to query.
     leaf_size (int): the leaf size parameter for nearest-neighbor search.
         High values are slower, but less memory-heavy computation.
-    use_counts (bool): Use count vectors instead of spaCy docs.
+    use_counts (bool): Use count vectors instead of initialized vectors. If no
+        vectors were found, the count vectors are automatically used.
     min_df (Union[int,float]): Remove terms that appear too infrequently given a threshold.
     n_jobs (Optional[int]): Number of parallel jobs to run for neighbor search
 

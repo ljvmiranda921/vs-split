@@ -102,7 +102,7 @@ return the training and testing features and labels respectively.
 | `*X`        | Iterable   | An iterable of features, preferably a `numpy.ndarray`. |
 | `*y`        | Iterable   | An iterable of labels, preferably a `numpy.ndarray`.   |
 | `*split_id` | str        | The type of split to use.                              |
-| **RETURNS** | Tuple[Iterable[Any], Iterable[Any], Iterable[Any], Iterable[Any]] | The training and testing features and labels (i.e. `X_train`, `y_train`, `X_test`, `y_test`) |
+| **RETURNS** | Tuple[Iterable[Any], Iterable[Any], Iterable[Any], Iterable[Any]] | The training and testing features and labels (i.e. `X_train`, `y_train`, `X_test`, `y_test`). |
 
 
 ### <kbd>function</kbd> `spacy_train_test_split`
@@ -113,7 +113,7 @@ Split a list of spaCy `Doc` objects into its training and testing partitions. By
 |-------------|--------------|--------------------------------------------------------|
 | `*docs`     | Iterable[Doc]| An iterable of spaCy Doc objects to split.             |
 | `*split_id` | str          | The type of split to use.                              |
-| **RETURNS** | Tuple[Iterable[Doc], Iterable[Doc]] | The training and testing spaCy Doc objects |
+| **RETURNS** | Tuple[Iterable[Doc], Iterable[Doc]] | The training and testing spaCy Doc objects. |
 
 
 ### Splitters Catalogue
@@ -132,4 +132,20 @@ About Random Splits](https://aclanthology.org/2021.eacl-main.156/)' (EACL 2021).
 | `*y`        | Iterable   | An iterable of labels, preferably a `numpy.ndarray`.   |
 | `test_size` | float      | The number of neighbors to query. Defaults to `0.2`    |
 | `leaf_size` | int        | The leaf size parameter for nearest neighbor search. High values are slower. Defaults to `3`.    |
-| **RETURNS** | Tuple[Iterable[Any], Iterable[Any], Iterable[Any], Iterable[Any]] | The training and testing features and labels (i.e. `X_train`, `y_train`, `X_test`, `y_test`) |
+| **RETURNS** | Tuple[Iterable[Any], Iterable[Any], Iterable[Any], Iterable[Any]] | The training and testing features and labels (i.e. `X_train`, `y_train`, `X_test`, `y_test`). |
+
+
+### <kbd>vs_split.splitters</kbd> `spacy-wasserstein.v1`
+
+spaCy-compatible version of `wasserstein.v1`. If no vectors were found in the 
+`Doc` object, then TF-IDF is computed.
+
+| Argument    | Type         | Description                                            |
+|-------------|--------------|--------------------------------------------------------|
+| `*docs`     | Iterable[Doc]| An iterable of spaCy Doc objects to split.             |
+| `test_size` | float      | The number of neighbors to query. Defaults to `0.2`.    |
+| `leaf_size` | int        | The leaf size parameter for nearest neighbor search. High values are slower. Defaults to `3`.    |
+| `use_counts`| bool       | Use count vectors instead of initialized vectors. If no vectors were found, the count vectors are automatically used. Defaults to `False`.   | 
+| `min_df`    | Union[int, float] | remove terms that appear too infrequently given a threshold. Defaults to `0.10`. | 
+| `n_jobs`    | Optional[int]   | Number of parallel jobs to run for neighbor search. Defaults to `-1` (use all CPUs). |
+| **RETURNS** | Tuple[Iterable[Doc], Iterable[Doc]] | The training and testing spaCy Doc objects. |
