@@ -125,3 +125,11 @@ Perform adversarial splitting using a divergence maximization method involving [
 This method approximates the test split by performing nearest-neighbor search on
 a random centroid. Based on Søgaard, Ebert et al.'s work on '[We Need to Talk
 About Random Splits](https://aclanthology.org/2021.eacl-main.156/)' (EACL 2021).
+
+| Argument    | Type       | Description                                            |
+|-------------|------------|--------------------------------------------------------|
+| `*X`        | Iterable   | An iterable of features, preferably a `numpy.ndarray`. |
+| `*y`        | Iterable   | An iterable of labels, preferably a `numpy.ndarray`.   |
+| `test_size` | float      | The number of neighbors to query. Defaults to `0.2`    |
+| `leaf_size` | int        | The leaf size parameter for nearest neighbor search. High values are slower. Defaults to `3`.    |
+| **RETURNS** | Tuple[Iterable[Any], Iterable[Any], Iterable[Any], Iterable[Any]] | The training and testing features and labels (i.e. `X_train`, `y_train`, `X_test`, `y_test`) |
