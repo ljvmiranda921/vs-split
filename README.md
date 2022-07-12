@@ -1,5 +1,8 @@
 # ⚔️ vs-split: a library for creating adversarial splits
 
+> **Warning**
+> This library is still a work in progress. Use at your own risk!
+
 Have you ever encountered a problem where **your model works well in your test set
 but doesn't perform well in the wild?**  It's likely because your test set does
 not reflect the reality of your domain, overestimating your model's performance.[^1]
