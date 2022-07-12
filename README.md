@@ -102,6 +102,7 @@ return the training and testing features and labels respectively.
 | `*X`        | Iterable   | An iterable of features, preferably a `numpy.ndarray`. |
 | `*y`        | Iterable   | An iterable of labels, preferably a `numpy.ndarray`.   |
 | `*split_id` | str        | The type of split to use.                              |
+| **RETURNS** | Tuple[Iterable[Any], Iterable[Any], Iterable[Any], Iterable[Any]] | The training and testing features and labels (i.e. `X_train`, `y_train`, `X_test`, `y_test`) |
 
 
 ### <kbd>function</kbd> `spacy_train_test_split`
