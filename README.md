@@ -94,14 +94,25 @@ splitters.
 
 ### <kbd>function</kbd> `train_test_split`
 
-Split a dataset into its training and testing partitions.
+Split a dataset into its training and testing partitions. By default, it should
+return the training and testing features and labels respectively. 
 
 | Argument    | Type       | Description                                            |
 |-------------|------------|--------------------------------------------------------|
 | `*X`        | Iterable   | An iterable of features, preferably a `numpy.ndarray`. |
 | `*y`        | Iterable   | An iterable of labels, preferably a `numpy.ndarray`.   |
-| `*split_id` | str        | The type of split to use.
+| `*split_id` | str        | The type of split to use.                              |
 
+
+### <kbd>function</kbd> `spacy_train_test_split`
+
+Split a list of spaCy `Doc` objects into its training and testing partitions. By default, it should return the training and test spaCy Doc objects respectively.
+
+| Argument    | Type         | Description                                            |
+|-------------|--------------|--------------------------------------------------------|
+| `*docs`     | Iterable[Doc]| An iterable of spaCy Doc objects to split.             |
+| `*split_id` | str          | The type of split to use.                              |
+| **RETURNS** | Tuple[Iterable[Doc], Iterable[Doc]] | The training and testing spaCy Doc objects |
 
 
 ### Splitters Catalogue
