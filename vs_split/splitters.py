@@ -1,4 +1,3 @@
-import json
 import random
 from collections import Counter
 from pathlib import Path
@@ -94,7 +93,8 @@ def wasserstein_spacy(
     test_size (float): the number of neighbors to query.
     leaf_size (int): the leaf size parameter for nearest-neighbor search.
         High values are slower, but less memory-heavy computation.
-    use_counts (bool): Use count vectors instead of spaCy docs.
+    use_counts (bool): Use count vectors instead of initialized vectors. If no
+        vectors were found, the count vectors are automatically used.
     min_df (Union[int,float]): Remove terms that appear too infrequently given a threshold.
     n_jobs (Optional[int]): Number of parallel jobs to run for neighbor search
 
@@ -200,8 +200,7 @@ def morph_attrs_split(
     docs: Iterable[Doc], attrs: List[str] = ["Number", "Person"], test_size: float = 0.2
 ):
     """
-    Perform adversarial splitting using a divergence maximization method
-    based on morphological attributes.
+    Perform a heuristic split based on morphological attributes.
 
     This method is loosely-based on the paper: '(Un)solving Morphological
     Inflection: Lemma Overlap Artificially Inflates Models' Performance' by
@@ -278,8 +277,7 @@ def morph_attrs_split(
 @splitters.register("entity-switch.v1")
 def entity_switch(
     docs: Iterable[Doc],
-    patterns: Optional[Dict[str, List[str]]] = None,
-    patterns_file: Optional[Path] = None,
+    patterns: Dict[str, List[str]],
     test_size: Optional[float] = None,
     lang: Optional[str] = None,
 ):
@@ -312,7 +310,6 @@ def entity_switch(
 
     docs (List[Doc]): list of spaCy Doc objects to split.
     patterns: Optional[Dict[str, List[str]]]: dictionary of patterns for substitution.
-    patterns_file: Optional[Path]: alternative way of providing patterns via a JSON file.
     test_size: Optional[float]: if provided, then the docs will be split further. Since entity-switching
         is only needed for the test set, you can just pass the test documents in this function.
     lang: Optional[str]: the language code to use for recreating the spaCy doc.
@@ -340,19 +337,6 @@ def entity_switch(
             "([], List[Docs])."
         )
         train_docs, _test_docs = [], docs
-
-    if patterns_file:
-        # Parameter 'patterns_file' will always override 'patterns'
-        with patterns_file.open() as f:
-            patterns = json.load(patterns)
-
-    if not patterns:
-        msg.fail(
-            "Patterns file for entity-switching is empty! Did you "
-            "provide a JSONL `patterns_file` or passed a dictionary in "
-            "the `patterns` parameter?",
-            exits=1,
-        )
 
     def _replace_ents(nlp: Language, doc: Doc, patterns: Dict[str, List[str]]) -> Doc:
         nlp.add_pipe("merge_entities")

@@ -21,7 +21,7 @@ Commands are only re-run if their inputs have changed.
 | Command | Description |
 | --- | --- |
 | `convert-wikineural` | Convert Wikineural dataset into spaCy Docs |
-| `demo-divergence-maximization` | Run the Divergence Maximization demo |
+| `demo` | Run the Divergence Maximization demo |
 
 ### 🗂 Assets
 
