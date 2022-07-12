@@ -92,5 +92,16 @@ splitters.
 
 ## 🎛 API
 
+### <kbd>function</kbd> `train_test_split`
+
+Split a dataset into its training and testing partitions.
+
+| Argument    | Type       | Description                                            |
+|-------------|------------|--------------------------------------------------------|
+| `*X`        | Iterable   | An iterable of features, preferably a `numpy.ndarray`. |
+| `*y`        | Iterable   | An iterable of labels, preferably a `numpy.ndarray`.   |
+| `*split_id` | str        | The type of split to use.
+
+
 
 ### Splitters Catalogue
