@@ -117,3 +117,11 @@ Split a list of spaCy `Doc` objects into its training and testing partitions. By
 
 
 ### Splitters Catalogue
+
+### <kbd>vs_split.splitters</kbd> `wasserstein.v1`
+
+Perform adversarial splitting using a divergence maximization method involving [Wasserstein distance](https://en.wikipedia.org/wiki/Wasserstein_metric).
+
+This method approximates the test split by performing nearest-neighbor search on
+a random centroid. Based on Søgaard, Ebert et al.'s work on '[We Need to Talk
+About Random Splits](https://aclanthology.org/2021.eacl-main.156/)' (EACL 2021).
