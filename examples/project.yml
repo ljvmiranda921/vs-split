@@ -28,6 +28,15 @@ assets:
   - dest: "assets/raw-en-wikineural-test.iob"
     description: "WikiNeural (en) test dataset from Tedeschi et al. (EMNLP 2021)"
     url: https://github.com/Babelscape/wikineural/blob/master/data/conll/en/test.conllu
+  - dest: "assets/wnut17-train.iob"
+    description: "WNUT17 training dataset for Emerging and Rare Entities Task from Derczynski et al., 2017"
+    url: https://github.com/juand-r/entity-recognition-datasets/blob/master/data/WNUT17/CONLL-format/data/train/wnut17train.conll
+  - dest: "assets/wnut17-dev.iob"
+    description: "WNUT17 dev dataset for Emerging and Rare Entities Task from Derczynski et al., 2017"
+    url: https://github.com/juand-r/entity-recognition-datasets/blob/master/data/WNUT17/CONLL-format/data/dev/emerging.dev.conll
+  - dest: "assets/wnut17-test.iob"
+    description: "WNUT17 test dataset for Emerging and Rare Entities Task from Derczynski et al., 2017"
+    url: https://github.com/juand-r/entity-recognition-datasets/blob/master/data/WNUT17/CONLL-format/data/test/emerging.test.annotated
 
 commands:
   - name: "convert-wikineural"
@@ -54,6 +63,21 @@ commands:
       - corpus/en-wikineural-dev.spacy
       - corpus/en-wikineural-test.spacy
 
+  - name: "convert-wnut17"
+    help: "Convert WNUT17 into spaCy Docs"
+    script:
+      - python -m spacy convert assets/wnut17-train.iob corpus/
+      - python -m spacy convert assets/wnut17-dev.iob corpus/
+      - python -m spacy convert assets/wnut17-test.iob corpus/
+    deps:
+      - assets/wnut17-train.iob
+      - assets/wnut17-dev.iob
+      - assets/wnut17-test.iob
+    outputs:
+      - corpus/wnut-17-train.spacy
+      - corpus/wnut-17-dev.spacy
+      - corpus/wnut-17-test.spacy
+
   - name: "demo"
     help: "Run the Divergence Maximization demo"
     script:
@@ -66,7 +90,3 @@ commands:
         --use-gpu ${vars.gpu_id}
         --max-steps ${vars.max_steps}
         --base-model ${vars.vectors}
-    deps:
-      - corpus/en-wikineural-train.spacy
-      - corpus/en-wikineural-dev.spacy
-      - corpus/en-wikineural-test.spacy
