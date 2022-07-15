@@ -20,7 +20,7 @@ from vs_split import spacy_train_test_split
 DEFAULT_SPLITS = [
     "wasserstein-spacy.v1",
     "doc-length.v1",
-    "morph-attrs-split.v1",
+    # "morph-attrs-split.v1",
     "entity-switch.v1"
 ]
 # fmt: on
