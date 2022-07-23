@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Ship the Conll2003 files in this project
+!*/examples/assets/conll2003*
