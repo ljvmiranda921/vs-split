@@ -78,6 +78,21 @@ commands:
       - corpus/wnut-17-dev.spacy
       - corpus/wnut-17-test.spacy
 
+  - name: "convert-conll2003"
+    help: "Convert ConLL2003 into spaCy Docs (IOB files are shipped together with this project)"
+    script:
+      - python -m spacy convert assets/conll2003-train.iob corpus/
+      - python -m spacy convert assets/conll2003-valid.iob corpus/
+      - python -m spacy convert assets/conll2003-test.iob corpus/
+    deps:
+      - assets/conll2003-train.iob
+      - assets/conll2003-valid.iob
+      - assets/conll2003-test.iob
+    outputs:
+      - corpus/conll2003-train.spacy
+      - corpus/conll2003-valid.spacy
+      - corpus/conll2003-test.spacy
+
   - name: "demo"
     help: "Run the Divergence Maximization demo"
     script:
