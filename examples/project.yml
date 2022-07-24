@@ -21,13 +21,13 @@ vars:
 assets:
   - dest: "assets/raw-en-wikineural-train.iob"
     description: "WikiNeural (en) training dataset from Tedeschi et al. (EMNLP 2021)"
-    url: https://github.com/Babelscape/wikineural/blob/master/data/conll/en/train.conllu
+    url: https://github.com/Babelscape/wikineural/blob/master/data/wikineural/en/train.conllu
   - dest: "assets/raw-en-wikineural-dev.iob"
     description: "WikiNeural (en) dev dataset from Tedeschi et al. (EMNLP 2021)"
-    url: https://github.com/Babelscape/wikineural/blob/master/data/conll/en/val.conllu
+    url: https://github.com/Babelscape/wikineural/blob/master/data/wikineural/en/val.conllu
   - dest: "assets/raw-en-wikineural-test.iob"
     description: "WikiNeural (en) test dataset from Tedeschi et al. (EMNLP 2021)"
-    url: https://github.com/Babelscape/wikineural/blob/master/data/conll/en/test.conllu
+    url: https://github.com/Babelscape/wikineural/blob/master/data/wikineural/en/test.conllu
   - dest: "assets/wnut17-train.iob"
     description: "WNUT17 training dataset for Emerging and Rare Entities Task from Derczynski et al., 2017"
     url: https://github.com/juand-r/entity-recognition-datasets/blob/master/data/WNUT17/CONLL-format/data/train/wnut17train.conll
